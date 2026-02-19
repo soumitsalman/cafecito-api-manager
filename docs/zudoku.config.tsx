@@ -11,14 +11,14 @@ const config: ZudokuConfig = {
     logo: {
       src: {
         light: "/beans.png",
-        dark: "/beans.png",
+        dark: "/beans-dark.png",
       },
     },
   },
   metadata: {
     title: "Beans API Developer Portal",
     description: "Developer documentation for Beans News & Blogs API",
-    favicon: "/beans.png",
+    favicon: "/beans-dark.png",
   },
   navigation: [
     {
