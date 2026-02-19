@@ -1,0 +1,1288 @@
+{
+  "info": {
+    "title": "Espresso News",
+    "description": "Espresso News API is an intelligent news aggregation and search service that curates fresh content from RSS feeds using AI-powered natural language queries and filters. Access trending articles, publishers, categories, and entities with fast JSON responses, perfect for developers building news apps or integrating smart content discovery.",
+    "version": "0.0.2"
+  },
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "Bean": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url",
+            "description": "The URL of the article."
+          },
+          "kind": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Kind",
+            "description": "The content type of the article, e.g., news, blog, oped, job, post."
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source",
+            "description": "The publisher ID of the article."
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title",
+            "description": "The title of the article."
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary",
+            "description": "A summary of the article."
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content",
+            "description": "The full content of the article if available."
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url",
+            "description": "The URL of the article's featured image."
+          },
+          "author": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Author",
+            "description": "The author of the article (if available)."
+          },
+          "created": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Created",
+            "description": "The publish date of the article."
+          },
+          "embedding": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Embedding",
+            "description": "The vector embedding for the article content."
+          },
+          "gist": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gist",
+            "description": "The highlights and key points of the article content."
+          },
+          "entities": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entities",
+            "description": "Named entities mentioned in the article content."
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Regions",
+            "description": "Geographic regions mentioned in the article content."
+          },
+          "categories": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Categories",
+            "description": "Categories/topics of the article content."
+          },
+          "sentiments": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sentiments",
+            "description": "Sentiments expressed in the article content."
+          }
+        },
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "Bean",
+        "description": "Metadata of an article such as a news or blog post."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Publisher": {
+        "properties": {
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Source",
+            "description": "The publisher ID/domain name of the publisher. This matches the source field in Bean."
+          },
+          "base_url": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Base Url",
+            "description": "The base URL of the publisher."
+          },
+          "site_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Site Name",
+            "description": "The name of the site."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "description": "A description/details of the publisher."
+          },
+          "favicon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Favicon",
+            "description": "The URL of the publisher's favicon."
+          }
+        },
+        "type": "object",
+        "required": [
+          "source",
+          "base_url"
+        ],
+        "title": "Publisher",
+        "description": "Metadata of the website, publication or social medium from which an article or chatter is sourced."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Performs a health check to see if the API service is running. Returns `{\"status\": \"alive\"}` if the service is operational.",
+        "operationId": "health_check_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/favicon.ico": {
+      "get": {
+        "summary": "Get favicon",
+        "description": "Retrieves the favicon for the API service.",
+        "operationId": "get_favicon_favicon_ico_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "summary": "List categories",
+        "description": "Retrieves a list of unique values of articles categories/topics, such as Artificial Intelligence, Cybersecurity, Politics, Software Engineering etc.",
+        "operationId": "get_categories_categories_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Get Categories Categories Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/entities": {
+      "get": {
+        "summary": "List entities",
+        "description": "Retrieves a list of unique values of named entities (people, organizations, products) mentioned in the articles.",
+        "operationId": "get_entities_entities_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Get Entities Entities Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/regions": {
+      "get": {
+        "summary": "List regions",
+        "description": "Retrieves a list of unique values of geographic regions mentioned in the articles such as UK, US, Europe etc.",
+        "operationId": "get_regions_regions_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "title": "Response Get Regions Regions Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/articles/latest": {
+      "get": {
+        "summary": "Search latest articles",
+        "description": "Searches for the latest articles/news/blogs.For vector search (when `q` is provided), the results are sorted by relevance. Otherwise, they are sorted by publication date in descending order (newest first).",
+        "operationId": "get_latest_articles_articles_latest_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 512,
+              "description": "The search query used for vector search. Minimum length is 3 characters.",
+              "title": "Q"
+            },
+            "description": "The search query used for vector search. Minimum length is 3 characters."
+          },
+          {
+            "name": "acc",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0,
+              "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned.",
+              "default": 0.75,
+              "title": "Acc"
+            },
+            "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "news",
+                "blog"
+              ],
+              "type": "string",
+              "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both.",
+              "title": "Kind"
+            },
+            "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search.",
+              "title": "Categories"
+            },
+            "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "entities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search.",
+              "title": "Entities"
+            },
+            "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "regions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search.",
+              "title": "Regions"
+            },
+            "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more publisher IDs (case sensitive).",
+              "title": "Sources"
+            },
+            "description": "Filters articles by one or more publisher IDs (case sensitive)."
+          },
+          {
+            "name": "published_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Filters articles that were published on or after this datetime.",
+              "title": "Published Since"
+            },
+            "description": "Filters articles that were published on or after this datetime."
+          },
+          {
+            "name": "with_content",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available. By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.",
+              "default": false,
+              "title": "With Content"
+            },
+            "description": "Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available. By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Bean"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Latest Articles Articles Latest Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/publishers": {
+      "get": {
+        "summary": "Get publishers' metadata",
+        "description": "Retrieves publisher metadata filtered by one or more publisher IDs.",
+        "operationId": "get_publishers_publishers_get",
+        "parameters": [
+          {
+            "name": "sources",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "List of publisher IDs to search by (case sensitive).",
+              "title": "Sources"
+            },
+            "description": "List of publisher IDs to search by (case sensitive)."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Publisher"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Publishers Publishers Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/publishers/sources": {
+      "get": {
+        "summary": "List publisher IDs",
+        "description": "Retrieves a list of unique values of publisher IDs from which the articles are sourced.",
+        "operationId": "get_publishers_publishers_sources_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Publishers Publishers Sources Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/articles/trending": {
+      "get": {
+        "summary": "Search trending articles",
+        "description": "Searches for the trending articles/news/blogs. For vector search (when `q` is provided), the results are sorted by relevance. Otherwise, they are sorted by internal trend score (calculated from social media engagement: comments, likes, shares, last engagement etc.).",
+        "operationId": "get_trending_articles_articles_trending_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 512,
+              "description": "The search query used for vector search. Minimum length is 3 characters.",
+              "title": "Q"
+            },
+            "description": "The search query used for vector search. Minimum length is 3 characters."
+          },
+          {
+            "name": "acc",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0,
+              "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned.",
+              "default": 0.75,
+              "title": "Acc"
+            },
+            "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "news",
+                "blog"
+              ],
+              "type": "string",
+              "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both.",
+              "title": "Kind"
+            },
+            "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search.",
+              "title": "Categories"
+            },
+            "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "entities",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search.",
+              "title": "Entities"
+            },
+            "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "regions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search.",
+              "title": "Regions"
+            },
+            "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "Filters articles by one or more publisher IDs (case sensitive).",
+              "title": "Sources"
+            },
+            "description": "Filters articles by one or more publisher IDs (case sensitive)."
+          },
+          {
+            "name": "trending_since",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Filters articles that had social media engagement (comments, shares, likes) on or after this datetime.",
+              "title": "Trending Since"
+            },
+            "description": "Filters articles that had social media engagement (comments, shares, likes) on or after this datetime."
+          },
+          {
+            "name": "with_content",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "\n    Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available.\n    By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.\n    ",
+              "default": false,
+              "title": "With Content"
+            },
+            "description": "\n    Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available.\n    By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.\n    "
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Bean"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Trending Articles Articles Trending Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlForwardHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "baseUrl": "${env.BASE_URL}"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/mcp": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "MCP Server",
+        "description": "Default MCP Server",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "mcpServerHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "operations": [
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_categories_categories_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_entities_entities_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_regions_regions_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_latest_articles_articles_latest_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_publishers_publishers_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_publishers_publishers_sources_get"
+                },
+                {
+                  "file": "./config/routes.oas.json",
+                  "id": "get_trending_articles_articles_trending_get"
+                }
+              ]
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        },
+        "operationId": "06bed6ae-0d7a-4a45-a3d4-320c30c14e70"
+      }
+    }
+  }
+}

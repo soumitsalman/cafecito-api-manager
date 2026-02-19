@@ -1,0 +1,184 @@
+# Beans API Guide
+
+**Version:** 0.0.2
+
+Beans is a news and blog intelligence API built for fast retrieval, filtering, and enrichment across
+**7000+ sources**. Primary coverage includes business, finance, technology, and corporate blogs,
+while still spanning broader global topics.
+
+## Product Overview
+
+Beans, a product of **Project Cafecito**, helps teams and applications discover high-signal content
+without drowning in noise.
+
+At the core is **Barista**, our ingestion and enrichment pipeline. It continuously processes content
+and attaches:
+
+- Summaries and digest-ready metadata
+- Categories and tags
+- Sentiment analysis
+- Entity extraction (people, companies, regions, products)
+- Social engagement indicators for trend relevance
+- Related-article linking across publishers
+
+Beans is not a social network and does not host original publisher content. It provides API-native
+intelligence so you can search, rank, monitor, and build downstream workflows.
+
+## Key Features
+
+- **Keyword + semantic search** in one endpoint
+- **Adjustable semantic threshold** with `acc` (0.0-1.0, default 0.75)
+- **Advanced filtering** by categories, entities, regions, sources, time windows
+- **Trending-aware signals** using social engagement indicators
+- **Related-news discovery** for propagation tracking
+- **Entity and sentiment enrichment** for analytics and AI pipelines
+
+## Core Endpoints
+
+### Health Check
+
+- `GET /health`
+
+### Discovery Metadata
+
+- `GET /categories`
+- `GET /entities`
+- `GET /regions`
+- `GET /publishers/sources`
+
+Shared pagination parameters:
+
+- `offset` (default `0`)
+- `limit` (default `16`, max `100`)
+
+### Search and Latest Content
+
+- `GET /articles/latest`
+
+Query parameters:
+
+- `q` (string): Search query (min 3, max 512)
+- `acc` (number): Semantic threshold (0.0-1.0, default 0.75)
+- `kind` (string): `news` or `blog`
+- `categories` (array[string], max 100)
+- `entities` (array[string], max 100)
+- `regions` (array[string], max 100)
+- `sources` (array[string], max 100)
+- `published_since` (ISO 8601 datetime)
+- `with_content` (boolean, default `false`)
+- `offset` (integer, >= 0)
+- `limit` (integer, 1-100, default `16`)
+
+Response:
+
+- `200 OK` with an array of `Bean` objects (or `null`)
+
+`Bean` fields include:
+
+- `url`, `kind`, `source`, `title`, `summary`, `content`, `image_url`, `author`, `created`
+- `entities`, `regions`, `categories`, `sentiments`
+
+### Publishers
+
+- `GET /publishers` (requires `sources[]`)
+- `GET /publishers/sources`
+
+## Base URL
+
+`https://beans.cafecito.tech`
+
+## Authentication
+
+Send your key in `x-api-key`:
+
+```http
+x-api-key: YOUR_API_KEY
+```
+
+## Quickstart Samples
+
+### 1) Latest news/blogs
+
+```bash
+curl -X GET "https://beans.cafecito.tech/articles/latest?limit=5" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+### 2) Keyword + semantic search
+
+```bash
+curl -G "https://beans.cafecito.tech/articles/latest" \
+  -H "x-api-key: YOUR_API_KEY" \
+  --data-urlencode "q=chip manufacturing policy impact" \
+  --data-urlencode "acc=0.78" \
+  --data-urlencode "kind=news" \
+  --data-urlencode "categories=Technology" \
+  --data-urlencode "categories=Business" \
+  --data-urlencode "limit=10"
+```
+
+### 3) JavaScript/TypeScript
+
+```ts
+const apiKey = process.env.BEANS_API_KEY;
+const baseUrl = "https://beans.cafecito.tech";
+
+const params = new URLSearchParams({
+  q: "earnings guidance from semiconductor companies",
+  acc: "0.8",
+  kind: "news",
+  with_content: "true",
+  limit: "8",
+});
+
+const response = await fetch(`${baseUrl}/articles/latest?${params}`, {
+  headers: {
+    "x-api-key": apiKey ?? "",
+  },
+});
+
+if (!response.ok) {
+  throw new Error(`Request failed with ${response.status}`);
+}
+
+const articles = await response.json();
+console.log(articles);
+```
+
+### 4) Python
+
+```python
+import os
+import requests
+
+base_url = "https://beans.cafecito.tech"
+headers = {"x-api-key": os.environ["BEANS_API_KEY"]}
+params = {
+    "q": "ai regulation updates",
+    "acc": 0.75,
+    "regions": ["United States"],
+    "limit": 5,
+}
+
+response = requests.get(f"{base_url}/articles/latest", headers=headers, params=params, timeout=30)
+response.raise_for_status()
+
+for item in response.json() or []:
+    print(item.get("title"), "=>", item.get("url"))
+```
+
+## Best Practices
+
+- Start with `acc=0.75`, then tune based on precision/recall needs.
+- Use `published_since` to keep feeds fresh.
+- Use `with_content=true` for RAG/summarization workloads.
+- Paginate with `offset` and `limit` for stable ingestion.
+
+## Typical Use Cases
+
+- AI assistants and RAG workflows with fresh context
+- Finance and business monitoring dashboards
+- Media trend detection and narrative propagation tracking
+- Analyst workflows requiring enrichment-ready JSON
+
+_Last updated: February 19, 2026_

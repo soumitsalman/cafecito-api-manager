@@ -1,0 +1,51 @@
+# Pricing
+
+Beans uses simple per-request pricing tiers for news and blog intelligence workloads.
+
+## Plans
+
+| Plan | Monthly Price | Rate Limit | Quota | Availability |
+| ---- | ------------- | ---------- | ----- | ------------ |
+| Free (Launch Offer) | $0 | 100 req/min | 10,000 req/month | Effective now through Sep 30 |
+| Broke & Beautiful | $5 | 100 req/min | 10,000 req/month | Starts Oct 1 |
+| Baller & Bling | Still deciding... | 1,000 req/min | Unlimited req/month | Starts Oct 1 |
+
+## Launch offer change
+
+The **Free** launch offer is valid only through **Sep 30**.
+
+Starting **Oct 1**, the Free tier will change to:
+
+- **10 req/min** rate limit
+- **1,000 req/month** quota
+
+## What is included
+
+- Access to keyword and semantic/vector search
+- Metadata endpoints (categories, entities, regions, sources)
+- Social engagement and trend-aware ranking signals
+- Related-article graph features for propagation analysis
+- API key management via developer portal
+
+## Billing and quota rules
+
+- There is **no soft limit**.
+- Billing is **monthly**.
+- If you hit your plan quota, access is capped until the next billing month.
+- You can resume immediately by upgrading to a higher tier.
+
+## Metering model
+
+- We prefer simplicity over complex points systems, which is why Beans uses straightforward request/call-based metering.
+- Metering is **per API call/request**.
+- There is **no point system**.
+- Response size and number of returned items do **not** change pricing.
+- There is no additional pricing factor for MCP usage.
+- There is no additional pricing factor for semantic/vector search.
+- Requests that return zero results (for example, strict filters) still count as requests.
+
+## Need a custom package?
+
+For enterprise, research, or redistribution scenarios, contact us for tailored pricing.
+
+_Last updated: February 19, 2026_
