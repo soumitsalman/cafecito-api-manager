@@ -1,6 +1,6 @@
 # Get API Key
 
-Beans uses API key authentication through the Zuplo developer portal.
+Cafecito APIs use API key authentication through the Zuplo developer portal.
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Beans uses API key authentication through the Zuplo developer portal.
 Include the key in the `x-api-key` header:
 
 ```bash
-curl -X GET "https://beans.cafecito.tech/health" \
+curl -X GET "https://beans.cafecito.tech/beans/api/health" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -36,6 +36,12 @@ curl -X GET "https://beans.cafecito.tech/health" \
 - `403 Forbidden`: key lacks required permissions
 - `429 Too Many Requests`: throttle exceeded for current plan
 
-Continue to [Beans API Guide](/beans-api) after key creation.
+## Product guides
+
+- [Beans](/howtos/beans-api)
+- [Cortado](/howtos/cortado-api)
+- [Latte](/howtos/latte-api)
+
+Use the same key-management practices across all Cafecito API products.
 
 _Last updated: February 19, 2026_

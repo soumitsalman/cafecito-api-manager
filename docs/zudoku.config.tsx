@@ -7,18 +7,18 @@ import type { ZudokuConfig } from "zudoku";
  */
 const config: ZudokuConfig = {
   site: {
-    title: "Beans Developer Portal",
+    title: "Cafecito API Developer Portal",
     logo: {
       src: {
-        light: "/beans.png",
-        dark: "/beans-dark.png",
+        light: "/cafecito.png",
+        dark: "/cafecito-dark.png",
       },
     },
   },
   metadata: {
-    title: "Beans API Developer Portal",
-    description: "Developer documentation for Beans News & Blogs API",
-    favicon: "/beans-dark.png",
+    title: "Cafecito API Developer Portal",
+    description: "Developer documentation for Cafecito product APIs",
+    favicon: "/cafecito-dark.png",
   },
   navigation: [
     {
@@ -36,22 +36,22 @@ const config: ZudokuConfig = {
             },
             {
               type: "doc",
-              file: "api-keys",
+              file: "howtos/api-keys",
             },
             {
               type: "doc",
-              file: "beans-api",
-            },
-          ],
+              file: "howtos/beans-api",
+            }
+          ]
         },
         {
           type: "category",
-          label: "Product",
+          label: "Pricing",
           icon: "coffee",
           items: [
             {
               type: "doc",
-              file: "pricing",
+              file: "pricing/beans-pricing",
             },
           ],
         },
@@ -62,33 +62,39 @@ const config: ZudokuConfig = {
           items: [
             {
               type: "doc",
-              file: "about-us",
+              file: "company/about-us",
             },
             {
               type: "doc",
-              file: "privacy-policy",
+              file: "company/privacy-policy",
             },
             {
               type: "doc",
-              file: "terms-of-use",
+              file: "company/terms-of-use",
             },
           ],
         },
       ],
     },
     {
-      type: "link",
-      to: "/api",
+      type: "category",
       label: "API Reference",
+      items: [
+        {
+          type: "link",
+          to: "/api/beans",
+          label: "Beans",
+        }
+      ],
     },
   ],
   redirects: [{ from: "/", to: "/introduction" }],
   apis: [
     {
       type: "file",
-      input: "../config/routes.oas.json",
-      path: "api",
-    },
+      input: "../config/beans.oas.json",
+      path: "api/beans",
+    }
   ],
   authentication: {
     // IMPORTANT: This is a demo Auth0 configuration.

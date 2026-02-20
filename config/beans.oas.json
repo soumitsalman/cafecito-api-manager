@@ -1,8 +1,8 @@
 {
   "info": {
-    "title": "Espresso News",
-    "description": "Espresso News API is an intelligent news aggregation and search service that curates fresh content from RSS feeds using AI-powered natural language queries and filters. Access trending articles, publishers, categories, and entities with fast JSON responses, perfect for developers building news apps or integrating smart content discovery.",
-    "version": "0.0.2"
+    "title": "Cafecito - Beans API & MCP",
+    "description": "Beans API & MCP is the Cafecito intelligent news & blogs aggregation and search service. It curates fresh content from RSS feeds using AI-powered natural language queries and filters. Access trending articles, publishers, categories, and entities with fast JSON responses, perfect for developers building news apps or integrating smart content discovery.",
+    "version": "0.1"
   },
   "openapi": "3.1.0",
   "components": {
@@ -206,19 +206,6 @@
         "title": "Bean",
         "description": "Metadata of an article such as a news or blog post."
       },
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
       "Publisher": {
         "properties": {
           "source": {
@@ -278,6 +265,19 @@
         "title": "Publisher",
         "description": "Metadata of the website, publication or social medium from which an article or chatter is sourced."
       },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },      
       "ValidationError": {
         "properties": {
           "loc": {
@@ -314,7 +314,7 @@
     }
   },
   "paths": {
-    "/health": {
+    "/beans/health": {
       "get": {
         "summary": "Health check",
         "description": "Performs a health check to see if the API service is running. Returns `{\"status\": \"alive\"}` if the service is operational.",
@@ -332,10 +332,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/health"
             }
           },
           "policies": {
@@ -347,40 +347,7 @@
         }
       }
     },
-    "/favicon.ico": {
-      "get": {
-        "summary": "Get favicon",
-        "description": "Retrieves the favicon for the API service.",
-        "operationId": "get_favicon_favicon_ico_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "${env.BASE_URL}"
-            }
-          },
-          "policies": {
-            "inbound": [
-              "user-rate-limit-inbound",
-              "backend-api-key-inbound"
-            ]
-          }
-        }
-      }
-    },
-    "/categories": {
+    "/beans/categories": {
       "get": {
         "summary": "List categories",
         "description": "Retrieves a list of unique values of articles categories/topics, such as Artificial Intelligence, Cybersecurity, Politics, Software Engineering etc.",
@@ -443,10 +410,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/categories"
             }
           },
           "policies": {
@@ -459,7 +426,7 @@
         }
       }
     },
-    "/entities": {
+    "/beans/entities": {
       "get": {
         "summary": "List entities",
         "description": "Retrieves a list of unique values of named entities (people, organizations, products) mentioned in the articles.",
@@ -522,10 +489,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/entities"
             }
           },
           "policies": {
@@ -538,7 +505,7 @@
         }
       }
     },
-    "/regions": {
+    "/beans/regions": {
       "get": {
         "summary": "List regions",
         "description": "Retrieves a list of unique values of geographic regions mentioned in the articles such as UK, US, Europe etc.",
@@ -601,10 +568,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/regions"
             }
           },
           "policies": {
@@ -617,7 +584,7 @@
         }
       }
     },
-    "/articles/latest": {
+    "/beans/articles/latest": {
       "get": {
         "summary": "Search latest articles",
         "description": "Searches for the latest articles/news/blogs.For vector search (when `q` is provided), the results are sorted by relevance. Otherwise, they are sorted by publication date in descending order (newest first).",
@@ -813,10 +780,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/articles/latest"
             }
           },
           "policies": {
@@ -829,194 +796,7 @@
         }
       }
     },
-    "/publishers": {
-      "get": {
-        "summary": "Get publishers' metadata",
-        "description": "Retrieves publisher metadata filtered by one or more publisher IDs.",
-        "operationId": "get_publishers_publishers_get",
-        "parameters": [
-          {
-            "name": "sources",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 100,
-              "description": "List of publisher IDs to search by (case sensitive).",
-              "title": "Sources"
-            },
-            "description": "List of publisher IDs to search by (case sensitive)."
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
-              "default": 0,
-              "title": "Offset"
-            },
-            "description": "Number of items to skip (for pagination)."
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 100,
-              "minimum": 1,
-              "description": "Maximum number of items to return.",
-              "default": 16,
-              "title": "Limit"
-            },
-            "description": "Maximum number of items to return."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Publisher"
-                      }
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Get Publishers Publishers Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "${env.BASE_URL}"
-            }
-          },
-          "policies": {
-            "inbound": [
-              "user-api-key-inbound",
-              "user-rate-limit-inbound",
-              "backend-api-key-inbound"
-            ]
-          }
-        }
-      }
-    },
-    "/publishers/sources": {
-      "get": {
-        "summary": "List publisher IDs",
-        "description": "Retrieves a list of unique values of publisher IDs from which the articles are sourced.",
-        "operationId": "get_publishers_publishers_sources_get",
-        "parameters": [
-          {
-            "name": "offset",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
-              "default": 0,
-              "title": "Offset"
-            },
-            "description": "Number of items to skip (for pagination)."
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "maximum": 100,
-              "minimum": 1,
-              "description": "Maximum number of items to return.",
-              "default": 16,
-              "title": "Limit"
-            },
-            "description": "Maximum number of items to return."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Get Publishers Publishers Sources Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "x-zuplo-route": {
-          "corsPolicy": "none",
-          "handler": {
-            "export": "urlForwardHandler",
-            "module": "$import(@zuplo/runtime)",
-            "options": {
-              "baseUrl": "${env.BASE_URL}"
-            }
-          },
-          "policies": {
-            "inbound": [
-              "user-api-key-inbound",
-              "user-rate-limit-inbound",
-              "backend-api-key-inbound"
-            ]
-          }
-        }
-      }
-    },
-    "/articles/trending": {
+    "/beans/articles/trending": {
       "get": {
         "summary": "Search trending articles",
         "description": "Searches for the trending articles/news/blogs. For vector search (when `q` is provided), the results are sorted by relevance. Otherwise, they are sorted by internal trend score (calculated from social media engagement: comments, likes, shares, last engagement etc.).",
@@ -1212,10 +992,10 @@
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
-            "export": "urlForwardHandler",
+            "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "baseUrl": "${env.BASE_URL}"
+              "rewritePattern": "${env.BASE_URL}/articles/trending"
             }
           },
           "policies": {
@@ -1228,7 +1008,195 @@
         }
       }
     },
-    "/mcp": {
+    "/beans/publishers": {
+      "get": {
+        "summary": "Get publishers' metadata",
+        "description": "Retrieves publisher metadata filtered by one or more publisher IDs.",
+        "operationId": "get_publishers_publishers_get",
+        "parameters": [
+          {
+            "name": "sources",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 100,
+              "description": "List of publisher IDs to search by (case sensitive).",
+              "title": "Sources"
+            },
+            "description": "List of publisher IDs to search by (case sensitive)."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Publisher"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Publishers Publishers Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "${env.BASE_URL}/publishers"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    "/beans/publishers/sources": {
+      "get": {
+        "summary": "List publisher IDs",
+        "description": "Retrieves a list of unique values of publisher IDs from which the articles are sourced.",
+        "operationId": "get_publishers_publishers_sources_get",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of items to skip (for pagination).",
+              "default": 0,
+              "title": "Offset"
+            },
+            "description": "Number of items to skip (for pagination)."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Maximum number of items to return.",
+              "default": 16,
+              "title": "Limit"
+            },
+            "description": "Maximum number of items to return."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Get Publishers Publishers Sources Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "${env.BASE_URL}/publishers/sources"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "user-api-key-inbound",
+              "user-rate-limit-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        }
+      }
+    },
+    
+    "/beans/mcp": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
@@ -1243,31 +1211,31 @@
             "options": {
               "operations": [
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_categories_categories_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_entities_entities_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_regions_regions_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_latest_articles_articles_latest_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_publishers_publishers_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_publishers_publishers_sources_get"
                 },
                 {
-                  "file": "./config/routes.oas.json",
+                  "file": "./config/beans.oas.json",
                   "id": "get_trending_articles_articles_trending_get"
                 }
               ]

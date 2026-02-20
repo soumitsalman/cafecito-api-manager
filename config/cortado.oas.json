@@ -1,0 +1,9 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Cafecito - Cortado API & MCP",
+    "description": "Cortado API & MCP is a future Cafecito product. This OpenAPI file is reserved for Cortado routes and tools.",
+    "version": "0.1.0-draft"
+  },
+  "paths": {}
+}

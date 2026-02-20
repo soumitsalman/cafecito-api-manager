@@ -1,6 +1,9 @@
-# Beans API Guide
+![Beans banner](/beans-banner.png)
+# Beans API
 
-**Version:** 0.0.2
+**Version:** 0.1
+
+Beans is part of the broader Cafecito API portfolio.
 
 Beans is a news and blog intelligence API built for fast retrieval, filtering, and enrichment across
 **7000+ sources**. Primary coverage includes business, finance, technology, and corporate blogs,
@@ -37,14 +40,14 @@ intelligence so you can search, rank, monitor, and build downstream workflows.
 
 ### Health Check
 
-- `GET /health`
+- `GET /beans/api/health`
 
 ### Discovery Metadata
 
-- `GET /categories`
-- `GET /entities`
-- `GET /regions`
-- `GET /publishers/sources`
+- `GET /beans/api/categories`
+- `GET /beans/api/entities`
+- `GET /beans/api/regions`
+- `GET /beans/api/publishers/sources`
 
 Shared pagination parameters:
 
@@ -53,7 +56,7 @@ Shared pagination parameters:
 
 ### Search and Latest Content
 
-- `GET /articles/latest`
+- `GET /beans/api/articles/latest`
 
 Query parameters:
 
@@ -80,8 +83,12 @@ Response:
 
 ### Publishers
 
-- `GET /publishers` (requires `sources[]`)
-- `GET /publishers/sources`
+- `GET /beans/api/publishers` (requires `sources[]`)
+- `GET /beans/api/publishers/sources`
+
+### MCP
+
+- `POST /beans/mcp`
 
 ## Base URL
 
@@ -100,14 +107,14 @@ x-api-key: YOUR_API_KEY
 ### 1) Latest news/blogs
 
 ```bash
-curl -X GET "https://beans.cafecito.tech/articles/latest?limit=5" \
+curl -X GET "https://beans.cafecito.tech/beans/api/articles/latest?limit=5" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
 ### 2) Keyword + semantic search
 
 ```bash
-curl -G "https://beans.cafecito.tech/articles/latest" \
+curl -G "https://beans.cafecito.tech/beans/api/articles/latest" \
   -H "x-api-key: YOUR_API_KEY" \
   --data-urlencode "q=chip manufacturing policy impact" \
   --data-urlencode "acc=0.78" \
@@ -131,7 +138,7 @@ const params = new URLSearchParams({
   limit: "8",
 });
 
-const response = await fetch(`${baseUrl}/articles/latest?${params}`, {
+const response = await fetch(`${baseUrl}/beans/api/articles/latest?${params}`, {
   headers: {
     "x-api-key": apiKey ?? "",
   },
@@ -160,7 +167,7 @@ params = {
     "limit": 5,
 }
 
-response = requests.get(f"{base_url}/articles/latest", headers=headers, params=params, timeout=30)
+response = requests.get(f"{base_url}/beans/api/articles/latest", headers=headers, params=params, timeout=30)
 response.raise_for_status()
 
 for item in response.json() or []:
@@ -180,5 +187,11 @@ for item in response.json() or []:
 - Finance and business monitoring dashboards
 - Media trend detection and narrative propagation tracking
 - Analyst workflows requiring enrichment-ready JSON
+
+## Related Cafecito Docs
+
+- [Cafecito Introduction](/introduction)
+- [Beans Pricing](/pricing/beans-pricing)
+- [Beans API Reference](/api/beans)
 
 _Last updated: February 19, 2026_
