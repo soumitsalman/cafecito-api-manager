@@ -277,7 +277,7 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
-      },      
+      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -335,7 +335,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/health"
+              "rewritePattern": "${env.BEANS_BASE_URL}/health"
             }
           },
           "policies": {
@@ -413,7 +413,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/categories"
+              "rewritePattern": "${env.BEANS_BASE_URL}/categories"
             }
           },
           "policies": {
@@ -492,7 +492,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/entities"
+              "rewritePattern": "${env.BEANS_BASE_URL}/entities"
             }
           },
           "policies": {
@@ -571,7 +571,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/regions"
+              "rewritePattern": "${env.BEANS_BASE_URL}/regions"
             }
           },
           "policies": {
@@ -783,7 +783,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/articles/latest"
+              "rewritePattern": "${env.BEANS_BASE_URL}/articles/latest"
             }
           },
           "policies": {
@@ -995,7 +995,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/articles/trending"
+              "rewritePattern": "${env.BEANS_BASE_URL}/articles/trending"
             }
           },
           "policies": {
@@ -1096,7 +1096,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/publishers"
+              "rewritePattern": "${env.BEANS_BASE_URL}/publishers"
             }
           },
           "policies": {
@@ -1182,7 +1182,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BASE_URL}/publishers/sources"
+              "rewritePattern": "${env.BEANS_BASE_URL}/publishers/sources"
             }
           },
           "policies": {
@@ -1195,14 +1195,13 @@
         }
       }
     },
-    
     "/beans/mcp": {
       "x-zuplo-path": {
         "pathMode": "open-api"
       },
       "post": {
         "summary": "MCP Server",
-        "description": "Default MCP Server",
+        "description": "Beans APIs exposed as MCP tools",
         "x-zuplo-route": {
           "corsPolicy": "none",
           "handler": {
@@ -1238,7 +1237,9 @@
                   "file": "./config/beans.oas.json",
                   "id": "get_trending_articles_articles_trending_get"
                 }
-              ]
+              ],
+              "name": "Beans MCP Server",
+              "version": "v0.1"
             }
           },
           "policies": {
