@@ -44,6 +44,19 @@
       },
       "name": "backend-api-key-inbound",
       "policyType": "set-headers-inbound"
+    },
+    {
+      "handler": {
+        "export": "ClerkJwtInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allowUnauthenticatedRequests": false,
+          "frontendApiUrl": "$env(CLERK_FRONTEND_API_URL)",
+          "oAuthResourceMetadataEnabled": true
+        }
+      },
+      "name": "clerk-jwt-auth-inbound",
+      "policyType": "clerk-jwt-auth-inbound"
     }
   ]
 }
