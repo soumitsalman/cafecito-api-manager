@@ -97,12 +97,6 @@ const config: ZudokuConfig = {
     }
   ],
   authentication: {
-    // IMPORTANT: This is a demo Clerk configuration.
-    // In a real application, you should replace these values with your own
-    // identity provider's configuration.
-    // This configuration WILL NOT WORK with custom domains.
-    // For more information, see:
-    // https://zuplo.com/docs/dev-portal/zudoku/configuration/authentication
     type: "clerk",
     clerkPubKey: "pk_test_YW11c2VkLXdyZW4tMjAuY2xlcmsuYWNjb3VudHMuZGV2JA",
     jwtTemplateName: "dev-portal",
@@ -112,22 +106,74 @@ const config: ZudokuConfig = {
     listKeys: true,
     revokeKey: true,
 
-    createKey: async ({ name, metadata = {} }, context) => {
-      const userId = context.auth?.userId;
-      if (!userId) {
-        throw new Error("Not authenticated");
+    createKey: async ({ apiKey, context, auth }) => {
+      const userId = auth.profile?.sub;
+      if (!auth.isAuthenticated || !userId) {
+        throw new Error("Authentication incomplete. Please sign in again.");
       }
 
-      const claims = context.auth?.claims || {};
-      return {
-        name: name || `Key for ${claims.email || userId}`,
+      if (auth.profile?.emailVerified === false) {
+        throw new Error("Verify your email first, then retry API key creation.");
+      }
+
+      const deploymentName =
+        context.env.ZUPLO_DEPLOYMENT_NAME ||
+        context.env.ZUPLO_PROJECT_NAME;
+
+      if (!deploymentName) {
+        throw new Error(
+          "Unable to resolve Zuplo deployment name for API key creation."
+        );
+      }
+
+      const payload = {
+        label: apiKey.description || auth.profile?.email || userId,
         metadata: {
-          ...metadata,
           clerkUserId: userId,
-          subscriptionPlan: claims.subscription_plan || "free",
+          email: auth.profile?.email,
+          subscriptionPlan: auth.profile?.subscription_plan || "free",
           createdAt: new Date().toISOString(),
         },
+        expiresOn: apiKey.expiresOn,
       };
+
+      const request = new Request(
+        `${zuploClientApiBase}/${deploymentName}/consumers`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const response = await fetch(await context.signRequest(request));
+      if (!response.ok) {
+        let detail = `Failed to create key (${response.status})`;
+        const contentType = response.headers.get("content-type") || "";
+        if (contentType.includes("application/problem+json")) {
+          const problem = (await response.json()) as {
+            detail?: string;
+            title?: string;
+          };
+          detail = problem.detail || problem.title || detail;
+        }
+
+        throw new Error(detail);
+      }
+
+      const responseJson = (await response.json()) as {
+        data?: { apiKeys?: { data?: Array<{ key?: string }> } };
+      };
+
+      if (!responseJson?.data?.apiKeys?.data?.[0]?.key) {
+        throw new Error(
+          "Key was created but no key value was returned by the API."
+        );
+      }
+
+      return;
     },
   },
 };

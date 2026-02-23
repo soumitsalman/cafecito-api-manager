@@ -43,3 +43,21 @@ changes in real-time with live-reload.
    ```bash
    npm run docs
    ```
+
+## Clerk auth notes (API key creation)
+
+If API key `createKey` is not being invoked, the user is typically not authenticated in the portal.
+
+Set these environment variables before starting docs:
+
+- `ZUDOKU_PUBLIC_CLERK_PUBLISHABLE_KEY` (preferred)
+- `ZUDOKU_PUBLIC_CLERK_JWT_TEMPLATE_NAME` (preferred, default: `dev-portal`)
+- `CLERK_PUBLISHABLE_KEY` and `CLERK_JWT_TEMPLATE_NAME` are also supported as fallback names.
+- `ZUDOKU_FAIL_ON_DEMO_CLERK_KEY` (default: `true`) fails fast in non-production if the demo key is still in use.
+
+In Clerk, ensure your application allows the Developer Portal callback URL:
+
+- Local: `http://localhost:3000/oauth/callback`
+- Hosted: `https://<your-docs-domain>/oauth/callback`
+
+Also ensure the JWT template name in Clerk matches `CLERK_JWT_TEMPLATE_NAME`.
