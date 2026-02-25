@@ -5,20 +5,41 @@
         "export": "ApiKeyInboundPolicy",
         "module": "$import(@zuplo/runtime)",
         "options": {
-          "allowUnauthenticatedRequests": "$env(DISABLE_AUTH)",
+          "allowUnauthenticatedRequests": true,
           "cacheTtlSeconds": 300
         }
       },
-      "name": "user-api-key-inbound",
+      "name": "zuplo-api-key-inbound",
       "policyType": "api-key-inbound"
+    },
+    {
+      "handler": {
+        "export": "ClerkJwtInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allowUnauthenticatedRequests": true,
+          "frontendApiUrl": "$env(CLERK_FRONTEND_API_URL)",
+          "oAuthResourceMetadataEnabled": true
+        }
+      },
+      "name": "clerk-jwt-auth-inbound",
+      "policyType": "clerk-jwt-auth-inbound"
+    },    
+    {
+      "handler": {
+        "export": "default",
+        "module": "$import(./modules/gate-auth)"
+      },
+      "name": "gate-auth",
+      "policyType": "custom-code-inbound"
     },
     {
       "handler": {
         "export": "RateLimitInboundPolicy",
         "module": "$import(@zuplo/runtime)",
         "options": {
-          "rateLimitBy": "ip",
-          "requestsAllowed": 2,
+          "rateLimitBy": "user",
+          "requestsAllowed": 10,
           "timeWindowMinutes": 1,
           "identifier": {
             "export": "rateLimit",
@@ -28,6 +49,22 @@
       },
       "name": "user-rate-limit-inbound",
       "policyType": "rate-limit-inbound"
+    },
+    {
+      "handler": {
+        "export": "QuotaInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "allowances": {
+            "requests": 1000
+          },
+          "period": "monthly",
+          "quotaBy": "user",
+          "quotaOnStatusCodes": "200-399"
+        }
+      },
+      "name": "quota-inbound",
+      "policyType": "quota-inbound"
     },
     {
       "handler": {
@@ -44,19 +81,6 @@
       },
       "name": "backend-api-key-inbound",
       "policyType": "set-headers-inbound"
-    },
-    {
-      "handler": {
-        "export": "ClerkJwtInboundPolicy",
-        "module": "$import(@zuplo/runtime)",
-        "options": {
-          "allowUnauthenticatedRequests": false,
-          "frontendApiUrl": "$env(CLERK_FRONTEND_API_URL)",
-          "oAuthResourceMetadataEnabled": true
-        }
-      },
-      "name": "clerk-jwt-auth-inbound",
-      "policyType": "clerk-jwt-auth-inbound"
     }
   ]
 }

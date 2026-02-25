@@ -340,7 +340,6 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
               "user-rate-limit-inbound",
               "backend-api-key-inbound"
             ]
@@ -419,8 +418,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -498,8 +500,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -577,8 +582,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -789,8 +797,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1001,8 +1012,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1102,8 +1116,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1188,8 +1205,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1245,8 +1265,11 @@
           },
           "policies": {
             "inbound": [
-              "user-api-key-inbound",
+              "zuplo-api-key-inbound",
+              "clerk-jwt-auth-inbound",
+              "gate-auth",
               "user-rate-limit-inbound",
+              "quota-inbound",
               "backend-api-key-inbound"
             ]
           }

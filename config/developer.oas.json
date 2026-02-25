@@ -1,0 +1,34 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Developer API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/v1/developer/api-key": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Create API Key",
+        "description": "Creates an API key for the authenticated developer",
+        "x-zuplo-route": {
+          "corsPolicy": "anything-goes",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/create-api-keys)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "clerk-jwt-auth-inbound",              
+              "user-rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "create-developer-api-key",
+        "x-internal": true
+      }
+    }
+  }
+}

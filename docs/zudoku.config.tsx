@@ -1,5 +1,6 @@
 import type { ZudokuConfig } from "zudoku";
 
+const serverUrl = process.env.ZUDOKU_PUBLIC_SERVER_URL || import.meta.env.ZUPLO_SERVER_URL;
 /**
  * Developer Portal Configuration
  * For more information, see:
@@ -98,82 +99,38 @@ const config: ZudokuConfig = {
   ],
   authentication: {
     type: "clerk",
-    clerkPubKey: "pk_test_YW11c2VkLXdyZW4tMjAuY2xlcmsuYWNjb3VudHMuZGV2JA",
-    jwtTemplateName: "dev-portal",
+    clerkPubKey: process.env.ZUDOKU_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    jwtTemplateName: process.env.ZUDOKU_PUBLIC_CLERK_JWT_TEMPLATE_NAME,
   },
   apiKeys: {
     enabled: true,
-    listKeys: true,
-    revokeKey: true,
-
     createKey: async ({ apiKey, context, auth }) => {
-      const userId = auth.profile?.sub;
-      if (!auth.isAuthenticated || !userId) {
-        throw new Error("Authentication incomplete. Please sign in again.");
-      }
-
-      if (auth.profile?.emailVerified === false) {
-        throw new Error("Verify your email first, then retry API key creation.");
-      }
-
-      const deploymentName =
-        context.env.ZUPLO_DEPLOYMENT_NAME ||
-        context.env.ZUPLO_PROJECT_NAME;
-
-      if (!deploymentName) {
-        throw new Error(
-          "Unable to resolve Zuplo deployment name for API key creation."
-        );
-      }
-
-      const payload = {
-        label: apiKey.description || auth.profile?.email || userId,
-        metadata: {
-          clerkUserId: userId,
+      const createApiKeyRequest = new Request(serverUrl + "/v1/developer/api-key", {
+        method: "POST",
+        body: JSON.stringify({
+          ...apiKey,
           email: auth.profile?.email,
-          subscriptionPlan: auth.profile?.subscription_plan || "free",
-          createdAt: new Date().toISOString(),
-        },
-        expiresOn: apiKey.expiresOn,
-      };
-
-      const request = new Request(
-        `${zuploClientApiBase}/${deploymentName}/consumers`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+          metadata: {
+            userId: auth.profile?.sub,
+            name: auth.profile?.name,
+            subscription_plan: auth.profile?.subscription_plan || "free",
+            subscription_status: auth.profile?.subscription_status || "inactive",
           },
-          body: JSON.stringify(payload),
-        }
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const response = await fetch(
+        await context.signRequest(createApiKeyRequest),
       );
 
-      const response = await fetch(await context.signRequest(request));
       if (!response.ok) {
-        let detail = `Failed to create key (${response.status})`;
-        const contentType = response.headers.get("content-type") || "";
-        if (contentType.includes("application/problem+json")) {
-          const problem = (await response.json()) as {
-            detail?: string;
-            title?: string;
-          };
-          detail = problem.detail || problem.title || detail;
-        }
-
-        throw new Error(detail);
+        throw new Error("Could not create API Key");
       }
 
-      const responseJson = (await response.json()) as {
-        data?: { apiKeys?: { data?: Array<{ key?: string }> } };
-      };
-
-      if (!responseJson?.data?.apiKeys?.data?.[0]?.key) {
-        throw new Error(
-          "Key was created but no key value was returned by the API."
-        );
-      }
-
-      return;
+      return true;
     },
   },
 };
