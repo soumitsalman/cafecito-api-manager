@@ -27,28 +27,36 @@ const config: ZudokuConfig = {
       label: "Documentation",
       items: [
         {
+              type: "doc",
+              file: "introduction",
+        },
+        {
           type: "category",
           label: "Getting Started",
           icon: "sparkles",
-          items: [
-            {
-              type: "doc",
-              file: "introduction",
-            },
+          items: [            
             {
               type: "doc",
               file: "howtos/api-keys",
             },
             {
               type: "doc",
-              file: "howtos/beans-api",
-            }
+              file: "howtos/beans-howto",
+            },            
+            {
+              type: "doc",
+              file: "howtos/espresso-howto",
+            },
+            {
+              type: "doc",
+              file: "howtos/cortado-howto",
+            },
           ]
         },
         {
           type: "category",
           label: "Pricing",
-          icon: "coffee",
+          icon: "dollar-sign",
           items: [
             {
               type: "doc",
