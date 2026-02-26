@@ -24,7 +24,7 @@
       },
       "name": "clerk-jwt-auth-inbound",
       "policyType": "clerk-jwt-auth-inbound"
-    },    
+    },
     {
       "handler": {
         "export": "default",
@@ -47,7 +47,7 @@
           }
         }
       },
-      "name": "user-rate-limit-inbound",
+      "name": "paiduser-rate-limit-inbound",
       "policyType": "rate-limit-inbound"
     },
     {
@@ -56,14 +56,14 @@
         "module": "$import(@zuplo/runtime)",
         "options": {
           "allowances": {
-            "requests": 1000
+            "requests": 50000
           },
           "period": "monthly",
           "quotaBy": "user",
           "quotaOnStatusCodes": "200-399"
         }
       },
-      "name": "quota-inbound",
+      "name": "freeuser-quota-inbound",
       "policyType": "quota-inbound"
     },
     {
@@ -81,6 +81,32 @@
       },
       "name": "backend-api-key-inbound",
       "policyType": "set-headers-inbound"
+    },
+    {
+      "handler": {
+        "export": "RateLimitInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "rateLimitBy": "ip",
+          "requestsAllowed": 100,
+          "timeWindowMinutes": 1
+        }
+      },
+      "name": "infra-rate-limit-inbound",
+      "policyType": "rate-limit-inbound"
+    },
+    {
+      "handler": {
+        "export": "RateLimitInboundPolicy",
+        "module": "$import(@zuplo/runtime)",
+        "options": {
+          "rateLimitBy": "user",
+          "requestsAllowed": 100,
+          "timeWindowMinutes": 1
+        }
+      },
+      "name": "freeuser-rate-limit-inbound",
+      "policyType": "rate-limit-inbound"
     }
   ]
 }

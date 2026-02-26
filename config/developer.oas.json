@@ -21,12 +21,36 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",              
-              "user-rate-limit-inbound"
+              "clerk-jwt-auth-inbound",
+              "infra-rate-limit-inbound"
             ]
           }
         },
         "operationId": "create-developer-api-key",
+        "x-internal": true
+      }
+    },
+    "/v1/developer/webhooks/clerk": {
+      "x-zuplo-path": {
+        "pathMode": "open-api"
+      },
+      "post": {
+        "summary": "Clerk Webhook",
+        "description": "Receives Clerk webhook events for user lifecycle changes (deletion, metadata updates). Syncs API key consumers accordingly.",
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "default",
+            "module": "$import(./modules/clerk-webhook)",
+            "options": {}
+          },
+          "policies": {
+            "inbound": [
+              "infra-rate-limit-inbound"
+            ]
+          }
+        },
+        "operationId": "clerk-webhook-handler",
         "x-internal": true
       }
     }

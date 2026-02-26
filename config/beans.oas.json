@@ -340,7 +340,7 @@
           },
           "policies": {
             "inbound": [
-              "user-rate-limit-inbound",
+              "infra-rate-limit-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -360,7 +360,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -374,7 +373,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -418,11 +416,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -442,7 +440,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -456,7 +453,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -503,8 +499,8 @@
               "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -524,7 +520,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -538,7 +533,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -582,11 +576,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -607,7 +601,6 @@
               "type": "string",
               "minLength": 3,
               "maxLength": 512,
-              "description": "The search query used for vector search. Minimum length is 3 characters.",
               "title": "Q"
             },
             "description": "The search query used for vector search. Minimum length is 3 characters."
@@ -620,7 +613,6 @@
               "type": "number",
               "maximum": 1,
               "minimum": 0,
-              "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned.",
               "default": 0.75,
               "title": "Acc"
             },
@@ -636,7 +628,6 @@
                 "blog"
               ],
               "type": "string",
-              "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both.",
               "title": "Kind"
             },
             "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
@@ -651,7 +642,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search.",
               "title": "Categories"
             },
             "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
@@ -666,7 +656,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search.",
               "title": "Entities"
             },
             "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
@@ -681,7 +670,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search.",
               "title": "Regions"
             },
             "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
@@ -696,7 +684,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more publisher IDs (case sensitive).",
               "title": "Sources"
             },
             "description": "Filters articles by one or more publisher IDs (case sensitive)."
@@ -708,7 +695,6 @@
             "schema": {
               "type": "string",
               "format": "date-time",
-              "description": "Filters articles that were published on or after this datetime.",
               "title": "Published Since"
             },
             "description": "Filters articles that were published on or after this datetime."
@@ -719,7 +705,6 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available. By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.",
               "default": false,
               "title": "With Content"
             },
@@ -732,7 +717,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -746,7 +730,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -797,11 +780,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -822,7 +805,6 @@
               "type": "string",
               "minLength": 3,
               "maxLength": 512,
-              "description": "The search query used for vector search. Minimum length is 3 characters.",
               "title": "Q"
             },
             "description": "The search query used for vector search. Minimum length is 3 characters."
@@ -835,7 +817,6 @@
               "type": "number",
               "maximum": 1,
               "minimum": 0,
-              "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned.",
               "default": 0.75,
               "title": "Acc"
             },
@@ -851,7 +832,6 @@
                 "blog"
               ],
               "type": "string",
-              "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both.",
               "title": "Kind"
             },
             "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
@@ -866,7 +846,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search.",
               "title": "Categories"
             },
             "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
@@ -881,7 +860,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search.",
               "title": "Entities"
             },
             "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
@@ -896,7 +874,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search.",
               "title": "Regions"
             },
             "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
@@ -911,7 +888,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "Filters articles by one or more publisher IDs (case sensitive).",
               "title": "Sources"
             },
             "description": "Filters articles by one or more publisher IDs (case sensitive)."
@@ -923,7 +899,6 @@
             "schema": {
               "type": "string",
               "format": "date-time",
-              "description": "Filters articles that had social media engagement (comments, shares, likes) on or after this datetime.",
               "title": "Trending Since"
             },
             "description": "Filters articles that had social media engagement (comments, shares, likes) on or after this datetime."
@@ -934,11 +909,10 @@
             "required": false,
             "schema": {
               "type": "boolean",
-              "description": "\n    Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available.\n    By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.\n    ",
               "default": false,
               "title": "With Content"
             },
-            "description": "\n    Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available.\n    By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response.\n    "
+            "description": "Includes full text content (plaintext/markdown) of the articles. This applies ONLY to articles where full content is available. By default (when `with_content=False`), ONLY `summary` is included instead of `content` for faster response."
           },
           {
             "name": "offset",
@@ -947,7 +921,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -961,7 +934,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -1012,11 +984,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1039,7 +1011,6 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "description": "List of publisher IDs to search by (case sensitive).",
               "title": "Sources"
             },
             "description": "List of publisher IDs to search by (case sensitive)."
@@ -1051,7 +1022,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -1065,7 +1035,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -1116,11 +1085,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1140,7 +1109,6 @@
             "schema": {
               "type": "integer",
               "minimum": 0,
-              "description": "Number of items to skip (for pagination).",
               "default": 0,
               "title": "Offset"
             },
@@ -1154,7 +1122,6 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
-              "description": "Maximum number of items to return.",
               "default": 16,
               "title": "Limit"
             },
@@ -1205,11 +1172,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
@@ -1265,11 +1232,11 @@
           },
           "policies": {
             "inbound": [
-              "zuplo-api-key-inbound",
               "clerk-jwt-auth-inbound",
+              "zuplo-api-key-inbound",
               "gate-auth",
-              "user-rate-limit-inbound",
-              "quota-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
               "backend-api-key-inbound"
             ]
           }
