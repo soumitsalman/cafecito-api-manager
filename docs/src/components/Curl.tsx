@@ -6,10 +6,12 @@ type CurlProps = { path: string; method?: string; query?: string;};
 
 export function Curl({ path, method = "GET", query = ""}: CurlProps) {
   const url = `${serverUrl}${path}${query ? (path.includes("?") ? "&" : "?") + query : ""}`;
-  const text = `${method} "${url}" \\` + "\n  -H \"Authorization: Bearer YOUR-API-KEY\"";
+  const text = `curl -X ${method} "${url}" \\\n  -H "Authorization: Bearer YOUR-API-KEY"`;
   return (
     <pre>
-      <code>{text}</code>
+      <code className="language-bash" style={{wordBreak: "break-word" }}>
+        {text}
+      </code>
     </pre>
   );
 }
