@@ -1,5 +1,5 @@
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import { verifyWebhook } from "@clerk/backend/webhooks";
+import { verifyWebhook } from "@clerk/backend";
 import {
   deleteUserConsumers,
   updateUserConsumers,
