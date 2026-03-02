@@ -111,33 +111,6 @@
             "title": "Created",
             "description": "The publish date of the article."
           },
-          "embedding": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "number"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Embedding",
-            "description": "The vector embedding for the article content."
-          },
-          "gist": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Gist",
-            "description": "The highlights and key points of the article content."
-          },
           "entities": {
             "anyOf": [
               {

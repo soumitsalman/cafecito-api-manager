@@ -1,13 +1,11 @@
-## Zuplo API
+## Cafecito API Gateway and Developer Portal
 
-This is a Zuplo API that was created with
-[`create-zuplo-api`](https://zuplo.com/docs).
-
-This repository is the overarching API manager for **Project Cafecito** products:
+[Cafecito's](https://cafecito.tech) [API](https://api.cafecito.tech) & MCP gateways and [developer portal](https://developer.cafecito.tech) is hosted on [Zuplo](https://zuplo.com/). 
+This was created using [`create-zuplo-api`](https://zuplo.com/docs). This repository is the overarching API manager for **Project Cafecito** products:
 
 - Beans API & MCP (current)
 - Cortado API & MCP (future)
-- Latte API & MCP (future)
+- Espresso API & MCP (future)
 
 ## Getting Started
 
