@@ -33,7 +33,7 @@ const config: ZudokuConfig = {
         {
           type: "category",
           label: "Getting Started",
-          icon: "sparkles",
+          icon: "puzzle",
           items: [            
             {
               type: "doc",
@@ -50,8 +50,12 @@ const config: ZudokuConfig = {
             {
               type: "doc",
               file: "howtos/cortado-howto",
-            },
+            }
           ]
+        },        
+        {
+          type: "doc",
+          file: "howtos/mcp-howto",
         },
         {
           type: "category",

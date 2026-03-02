@@ -1,6 +1,6 @@
 ---
 description: Cafecito Media APIs — automate the nonsense so you can do your actual job.
-sidebar_label: Cafecito
+sidebar_label: Welcome
 sidebar_icon: coffee
 ---
 
@@ -40,20 +40,7 @@ curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource
 
 ## MCP support
 
-Every API-based product also ships an **MCP server** — same auth, same key, zero extra setup. Point your AI agent or MCP client at the endpoint and go:
-
-```bash
-curl -X POST "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/mcp" \
-    -H "Authorization: Bearer YOUR-API-KEY" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "jsonrpc": "2.0",
-      "method": "tools/list",
-      "id": 1
-    }'
-```
-
-Your existing API key works for MCP calls too — they share the same rate limit and quota meter.
+Every API-based product also ships an **MCP server** — same auth, same key, zero extra setup. See the [MCP Integration guide](/howtos/mcp-howto) for full details and code samples.
 
 ## Launch Preview limits
 
@@ -71,6 +58,7 @@ You can create unlimited API keys — they all count toward the same rate limit 
 
 - [API Keys & Auth](/howtos/api-keys)
 - [Beans API Guide](/howtos/beans-howto)
+- [MCP Integration](/howtos/mcp-howto)
 - [Beans API Reference](/api/beans)
 - [Pricing](/pricing/beans-pricing)
 

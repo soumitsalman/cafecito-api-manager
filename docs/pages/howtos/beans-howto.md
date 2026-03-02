@@ -96,11 +96,7 @@ Each `Bean` includes: `url`, `kind`, `source`, `title`, `summary`, `content`, `i
 
 ### MCP server
 
-```
-POST https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/mcp
-```
-
-Beans endpoints exposed as MCP tools for AI agent integration.
+Beans endpoints are exposed as MCP tools for AI agent integration. See the [MCP Integration guide](/howtos/mcp-howto) for full details.
 
 ---
 
