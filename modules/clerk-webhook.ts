@@ -1,43 +1,9 @@
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import { Webhook } from "standardwebhooks";
+import { Webhook } from "svix";
 import {
   deleteUserConsumers,
   updateUserConsumers,
 } from "./consumer-ops";
-
-// Mirrors @clerk/backend/webhooks verifyWebhook — uses standardwebhooks directly
-// because Zuplo's esbuild bundler cannot resolve @clerk/backend subpath exports.
-async function verifyClerkWebhook(
-  request: ZuploRequest,
-  signingSecret: string,
-): Promise<{ type: string; data: Record<string, unknown> }> {
-  const svixId = request.headers.get("svix-id")?.trim();
-  const svixTimestamp = request.headers.get("svix-timestamp")?.trim();
-  const svixSignature = request.headers.get("svix-signature")?.trim();
-
-  if (!svixId || !svixTimestamp || !svixSignature) {
-    const missing = [
-      !svixId && "svix-id",
-      !svixTimestamp && "svix-timestamp",
-      !svixSignature && "svix-signature",
-    ]
-      .filter(Boolean)
-      .join(", ");
-    throw new Error(`Missing required webhook headers: ${missing}`);
-  }
-
-  const body = await request.text();
-
-  // Map svix-* headers to the standardwebhooks spec (webhook-*)
-  const wh = new Webhook(signingSecret);
-  const payload = wh.verify(body, {
-    "webhook-id": svixId,
-    "webhook-timestamp": svixTimestamp,
-    "webhook-signature": svixSignature,
-  }) as { type: string; data: Record<string, unknown> };
-
-  return payload;
-}
 
 // --- Event type groupings ---
 const SUBSCRIPTION_TERMINATE_EVENTS = new Set([
@@ -108,10 +74,16 @@ export default async function (
   request: ZuploRequest,
   context: ZuploContext,
 ) {
-  // --- Verify the webhook signature using Clerk's official SDK ---
-  let evt;
+  // --- Verify the webhook signature using svix (Clerk's underlying webhook library) ---
+  const body = await request.text();
+  const wh = new Webhook(environment.CLERK_WEBHOOK_SIGNING_SECRET);
+  let evt: { type: string; data: Record<string, unknown> };
   try {
-    evt = await verifyClerkWebhook(request, environment.CLERK_WEBHOOK_SIGNING_SECRET);
+    evt = wh.verify(body, {
+      "svix-id": request.headers.get("svix-id") ?? "",
+      "svix-timestamp": request.headers.get("svix-timestamp") ?? "",
+      "svix-signature": request.headers.get("svix-signature") ?? "",
+    }) as { type: string; data: Record<string, unknown> };
   } catch (err) {
     context.log.error("Clerk webhook verification failed:", err);
     return jsonResponse({ error: "Webhook verification failed" }, 400);
