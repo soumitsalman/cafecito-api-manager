@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/backend": "^2.33.0",
+    "standardwebhooks": "^1.0.0",
     "zuplo": "^6"
   },
   "devDependencies": {

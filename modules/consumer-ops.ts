@@ -1,8 +1,8 @@
 import { ZuploContext, environment } from "@zuplo/runtime";
 
 const accountName = environment.ZUPLO_ACCOUNT_NAME;
-const bucketName = environment.ZUPLO_API_KEY_SERVICE_BUCKET_NAME;
-const apiKey = environment.ZUPLO_DEVELOPER_API_KEY;
+const bucketName = environment.ZAPI_BUCKET_NAME;
+const apiKey = environment.ZAPI_DEVELOPER_API_KEY;
 const ZUPLO_API_BASE = `https://dev.zuplo.com/v1/accounts/${accountName}/key-buckets/${bucketName}`;
 
 interface Consumer {

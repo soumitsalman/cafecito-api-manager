@@ -12,13 +12,17 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
     const email = body.email ?? "nobody@example.com";
 
+    const subscriptionPlan = body.metadata?.subscription_plan ?? "free";
+    const subscriptionStatus = body.metadata?.subscription_status ?? 
+        (subscriptionPlan === "free" ? "active" : "inactive");
+
     const response = await fetch(
         `https://dev.zuplo.com/v1/accounts/${accountName}/key-buckets/${bucketName}/consumers?with-api-key=true`,
         {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${environment.ZUPLO_DEVELOPER_API_KEY}`,
+                Authorization: `Bearer ${environment.ZAPI_DEVELOPER_API_KEY}`,
             },
             body: JSON.stringify({
                 name: crypto.randomUUID(),
@@ -31,8 +35,8 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
                     email: email,
                 },
                 metadata: {
-                    subscription_plan: body.metadata?.subscription_plan ?? "free",
-                    subscription_status: body.metadata?.subscription_status ?? "inactive",
+                    subscription_plan: subscriptionPlan,
+                    subscription_status: subscriptionStatus,
                 },
             }),
         }

@@ -125,8 +125,8 @@ const config: ZudokuConfig = {
           metadata: {
             userId: auth.profile?.sub,
             name: auth.profile?.name,
-            subscription_plan: auth.profile?.subscription_plan || "free",
-            subscription_status: auth.profile?.subscription_status || "inactive",
+            subscription_plan: auth.profile?.subscription_plan,
+            subscription_status: auth.profile?.subscription_status,
           },
         }),
         headers: {

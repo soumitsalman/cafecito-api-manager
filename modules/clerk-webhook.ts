@@ -1,9 +1,43 @@
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import { verifyWebhook } from "@clerk/backend";
+import { Webhook } from "standardwebhooks";
 import {
   deleteUserConsumers,
   updateUserConsumers,
 } from "./consumer-ops";
+
+// Mirrors @clerk/backend/webhooks verifyWebhook — uses standardwebhooks directly
+// because Zuplo's esbuild bundler cannot resolve @clerk/backend subpath exports.
+async function verifyClerkWebhook(
+  request: ZuploRequest,
+  signingSecret: string,
+): Promise<{ type: string; data: Record<string, unknown> }> {
+  const svixId = request.headers.get("svix-id")?.trim();
+  const svixTimestamp = request.headers.get("svix-timestamp")?.trim();
+  const svixSignature = request.headers.get("svix-signature")?.trim();
+
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    const missing = [
+      !svixId && "svix-id",
+      !svixTimestamp && "svix-timestamp",
+      !svixSignature && "svix-signature",
+    ]
+      .filter(Boolean)
+      .join(", ");
+    throw new Error(`Missing required webhook headers: ${missing}`);
+  }
+
+  const body = await request.text();
+
+  // Map svix-* headers to the standardwebhooks spec (webhook-*)
+  const wh = new Webhook(signingSecret);
+  const payload = wh.verify(body, {
+    "webhook-id": svixId,
+    "webhook-timestamp": svixTimestamp,
+    "webhook-signature": svixSignature,
+  }) as { type: string; data: Record<string, unknown> };
+
+  return payload;
+}
 
 // --- Event type groupings ---
 const SUBSCRIPTION_TERMINATE_EVENTS = new Set([
@@ -77,9 +111,7 @@ export default async function (
   // --- Verify the webhook signature using Clerk's official SDK ---
   let evt;
   try {
-    evt = await verifyWebhook(request, {
-      signingSecret: environment.CLERK_WEBHOOK_SIGNING_SECRET,
-    });
+    evt = await verifyClerkWebhook(request, environment.CLERK_WEBHOOK_SIGNING_SECRET);
   } catch (err) {
     context.log.error("Clerk webhook verification failed:", err);
     return jsonResponse({ error: "Webhook verification failed" }, 400);
