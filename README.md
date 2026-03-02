@@ -32,6 +32,24 @@ You can start editing product routes with the OpenAPI files in `config/`:
 
 The dev server will automatically reload the API with your changes.
 
+## Docs / Developer Portal
+
+Documentation for the Cafecito developer portal lives in the `docs/` folder and is powered by Zudoku.
+
+To run the docs site locally:
+
+```bash
+cd docs
+npm run dev
+```
+
+To build a production version of the portal:
+
+```bash
+cd docs
+npm run build
+```
+
 ## Learn More
 
 To learn more about Zuplo, you can visit the
