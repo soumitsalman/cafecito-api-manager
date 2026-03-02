@@ -1,6 +1,6 @@
 import type { ZudokuConfig } from "zudoku";
 
-const serverUrl = process.env.ZUDOKU_PUBLIC_SERVER_URL || import.meta.env.ZUPLO_SERVER_URL;
+const serverUrl = process.env.ZUDOKU_PUBLIC_GATEWAY_URL || import.meta.env.ZUPLO_SERVER_URL;
 /**
  * Developer Portal Configuration
  * For more information, see:

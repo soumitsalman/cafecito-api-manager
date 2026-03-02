@@ -4,6 +4,8 @@ sidebar_icon: brain-circuit
 description: Cafecito MCP (Model Context Protocol) Integration Guide
 ---
 
+import { Curl, BaseUrl } from "../../src/components/Curl";
+
 # MCP Integration
 
 Every Cafecito API product ships an **MCP (Model Context Protocol) server** — same auth, same key, zero extra setup. Point your AI agent or MCP client at the endpoint and go.
@@ -18,39 +20,16 @@ Authorization: Bearer YOUR-API-KEY
 
 ## General MCP endpoint pattern
 
-```bash
-curl -X POST "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/mcp" \
-    -H "Authorization: Bearer YOUR-API-KEY" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "jsonrpc": "2.0",
-      "method": "tools/list",
-      "id": 1
-    }'
-```
+<Curl path="/<product>/mcp" method="POST" />
 
 Your existing API key works for MCP calls too — they share the same rate limit and quota meter.
 
 ## Beans MCP server
-
-```
-POST https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/mcp
-```
-
 All Beans endpoints are exposed as MCP tools for AI agent integration.
 
 ### List available tools
 
-```bash
-curl -X POST "https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/mcp" \
-    -H "Authorization: Bearer YOUR-API-KEY" \
-    -H "Content-Type: application/json" \
-    -d '{
-      "jsonrpc": "2.0",
-      "method": "tools/list",
-      "id": 1
-    }'
-```
+<Curl path="/beans/mcp" method="POST" />
 
 ## Use cases
 

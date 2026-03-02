@@ -4,6 +4,8 @@ sidebar_label: Welcome
 sidebar_icon: coffee
 ---
 
+import { Curl, BaseUrl } from "../src/components/Curl";
+
 ![Cafecito banner](/cafecito-banner.png)
 
 # Cafecito Developer Portal
@@ -26,17 +28,11 @@ Welcome to the **Cafecito** developer portal — the home base for our media pro
 2. **[Create an API key](/settings/api-keys)** — make as many as you want, they all share the same meter.
 3. **Call something:**
 
-```bash
-curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/articles/latest?q=market+performance&limit=5" \
-    -H "Authorization: Bearer YOUR-API-KEY"
-```
+<Curl path="/beans/articles/latest" query="q=market+performance&limit=5" />
 
 That's it. No SDK to install. No OAuth dance. Just an HTTP call. The general pattern is:
 
-```bash
-curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource>?<query-params>" \
-    -H "Authorization: Bearer YOUR-API-KEY"
-```
+<Curl path="/<product>/<resource>" query="<query-params>" />
 
 ## MCP support
 
@@ -68,4 +64,4 @@ You can create unlimited API keys — they all count toward the same rate limit 
 - [Privacy Policy](/company/privacy-policy)
 - [Terms of Use](/company/terms-of-use)
 
-_Last updated: February 26, 2026_
+_Last updated: March 2, 2026_

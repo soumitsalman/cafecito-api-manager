@@ -2,6 +2,8 @@
 
 No keys, no data. Here's how to get yours.
 
+import { Curl, BaseUrl } from "../../src/components/Curl";
+
 ## Get a key
 
 1. Click **Login / Sign Up** in the upper-right corner (or your name if you're already signed in).
@@ -21,17 +23,11 @@ Authorization: Bearer YOUR-API-KEY
 
 Example:
 
-```bash
-curl "https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/health" \
-  -H "Authorization: Bearer YOUR-API-KEY"
-```
+<Curl path="/beans/health" />
 
 The general call pattern for any Cafecito product:
 
-```bash
-curl "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource>?<query-params>" \
-  -H "Authorization: Bearer YOUR-API-KEY"
-```
+<Curl path="/<product>/<resource>" query="<query-params>" />
 
 ## Works for MCP too
 
@@ -68,4 +64,4 @@ All your keys share the same meter. Creating more keys doesn't give you more quo
 - [Beans API](/howtos/beans-howto)
 - [Beans API Reference](/api/beans)
 
-_Last updated: February 26, 2026_
+_Last updated: March 2, 2026_

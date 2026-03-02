@@ -946,7 +946,7 @@
     },
     "/beans/publishers": {
       "get": {
-        "summary": "Get publishers' metadata",
+        "summary": "Get publisher metadata",
         "description": "Retrieves publisher metadata filtered by one or more publisher IDs.",
         "operationId": "get_publishers_publishers_get",
         "parameters": [

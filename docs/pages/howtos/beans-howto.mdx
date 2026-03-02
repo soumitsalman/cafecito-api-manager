@@ -3,6 +3,8 @@ sidebar_label: Beans
 category: "Getting Started"
 ---
 
+import { Curl, BaseUrl } from "../../src/components/Curl";
+
 ![Beans banner](/beans-banner.png)
 
 # Beans API & MCP
@@ -15,7 +17,7 @@ It's a news and blog API sourcing data from **7 000+ publishers** — business, 
 
 Under the hood our pipeline (**Barista** — yes, we like coffee names) continuously ingests and tags content with:
 
-- **Categories** and topic tags
+- **Category/topic** tags
 - **Sentiment** analysis
 - **Extracted Entities** — people, companies, regions, products
 - **Social media engagement signals** for trend relevance
@@ -33,27 +35,20 @@ That's right, it is an RSS feed reader (on steroid). It gives you clean, queryab
 
 ## Authentication
 
-All requests use a Bearer token. Grab your API key from the [developer portal](/settings/api-keys).
+All requests use a Bearer token. Grab your [API key](/settings/api-keys).
 
 ```
 Authorization: Bearer YOUR-API-KEY
 ```
 
 ## Base URL
-
-```
-https://cafecito-apis-main-948451c.d2.zuplo.dev
-```
-
 All Beans endpoints live under the `/beans` path prefix.
 
 ## Core endpoints
 
 ### Health check
 
-```
-GET https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/health
-```
+<Curl path="/beans/health" method="GET" />
 
 ### Discovery / metadata
 
@@ -104,11 +99,13 @@ Below are real-world examples. Replace `YOUR-API-KEY` with the key you generated
 
 ### 1. Latest news on market performance & economy (published today)
 
+**Base URL:** <BaseUrl />
+
 **JavaScript**
 
 ```js
 const API_KEY = process.env.CAFECITO_API_KEY;
-const BASE = "https://cafecito-apis-main-948451c.d2.zuplo.dev";
+const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app"; // or read from env
 
 const today = new Date().toISOString().split("T")[0] + "T00:00:00Z";
 
@@ -135,7 +132,7 @@ import os, requests
 from datetime import date
 
 API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = "https://cafecito-apis-main-948451c.d2.zuplo.dev"
+BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
 
 today = date.today().isoformat() + "T00:00:00Z"
 
@@ -163,6 +160,9 @@ for article in resp.json() or []:
 **JavaScript**
 
 ```js
+const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app"; // from env or Curl component
+const API_KEY = process.env.CAFECITO_API_KEY;
+
 const params = new URLSearchParams();
 params.append("tags", "Robotics");
 params.append("tags", "saudi arabia");
@@ -179,6 +179,11 @@ articles?.forEach((a) => console.log(a.title, "|", a.regions));
 **Python**
 
 ```python
+import os, requests
+
+API_KEY = os.environ["CAFECITO_API_KEY"]
+BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+
 resp = requests.get(
     f"{BASE}/beans/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
@@ -200,6 +205,9 @@ Use the trending endpoint to surface blog posts ranked by trend score (or releva
 **JavaScript**
 
 ```js
+const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
+const API_KEY = process.env.CAFECITO_API_KEY;
+
 const params = new URLSearchParams();
 params.append("tags", "large language models");
 params.append("tags", "Alibaba");
@@ -216,6 +224,11 @@ articles?.forEach((a) => console.log(a.title, "|", a.source, "→", a.url));
 **Python**
 
 ```python
+import os, requests
+
+API_KEY = os.environ["CAFECITO_API_KEY"]
+BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+
 resp = requests.get(
     f"{BASE}/beans/articles/trending",
     headers={"Authorization": f"Bearer {API_KEY}"},
@@ -235,6 +248,9 @@ for article in resp.json() or []:
 **JavaScript**
 
 ```js
+const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
+const API_KEY = process.env.CAFECITO_API_KEY;
+
 const params = new URLSearchParams();
 params.append("sources", "barchart");
 params.append("kind", "news");
@@ -250,6 +266,11 @@ articles?.forEach((a) => console.log(a.source, "—", a.title));
 **Python**
 
 ```python
+import os, requests
+
+API_KEY = os.environ["CAFECITO_API_KEY"]
+BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+
 resp = requests.get(
     f"{BASE}/beans/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
@@ -269,6 +290,9 @@ for article in resp.json() or []:
 **JavaScript**
 
 ```js
+const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
+const API_KEY = process.env.CAFECITO_API_KEY;
+
 let offset = 0;
 const limit = 100;
 const allSources = [];
@@ -291,6 +315,11 @@ console.log(allSources);
 **Python**
 
 ```python
+import os, requests
+
+API_KEY = os.environ["CAFECITO_API_KEY"]
+BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+
 all_sources = []
 offset = 0
 limit = 100
