@@ -4,12 +4,12 @@ No keys, no data. Here's how to get yours.
 
 ## Get a key
 
-1. Click **Login / Sign Up** in the upper-right corner (or your name if you're already signed in). It's free during the launch preview.
+1. Click **Login / Sign Up** in the upper-right corner (or your name if you're already signed in).
 2. Once logged in, go to your **[API Keys](/settings/api-keys)** section.
-3. Hit **Create** — give it a name if you feel like it.
+3. Hit **Create** — give it a name (It's free during the launch preview, so might as well).
 4. Copy the key and stash it somewhere safe (environment variable, secret manager, tattoo on your arm — your call).
 
-You can create **as many keys as you want**. They all share the same rate limit and quota meter, so don't think you're gaming the system with 47 keys.
+You can create **as many keys as you want**. They all share the same rate limit and quota meter, so don't think you're gaming the system with 47000 keys.
 
 ## Use it in requests
 
@@ -28,9 +28,9 @@ curl "https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/health" \
 
 The general call pattern for any Cafecito product:
 
-```
-GET https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource>?<query-params>
-Authorization: Bearer YOUR-API-KEY
+```bash
+curl "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource>?<query-params>" \
+  -H "Authorization: Bearer YOUR-API-KEY"
 ```
 
 ## Works for MCP too

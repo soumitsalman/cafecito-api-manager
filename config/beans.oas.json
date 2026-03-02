@@ -347,7 +347,7 @@
         }
       }
     },
-    "/beans/categories": {
+    "/beans/tags/categories": {
       "get": {
         "summary": "List categories",
         "description": "Retrieves a list of unique values of articles categories/topics, such as Artificial Intelligence, Cybersecurity, Politics, Software Engineering etc.",
@@ -411,7 +411,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BEANS_BASE_URL}/categories"
+              "rewritePattern": "${env.BEANS_BASE_URL}/tags/categories"
             }
           },
           "policies": {
@@ -427,7 +427,7 @@
         }
       }
     },
-    "/beans/entities": {
+    "/beans/tags/entities": {
       "get": {
         "summary": "List entities",
         "description": "Retrieves a list of unique values of named entities (people, organizations, products) mentioned in the articles.",
@@ -491,7 +491,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BEANS_BASE_URL}/entities"
+              "rewritePattern": "${env.BEANS_BASE_URL}/tags/entities"
             }
           },
           "policies": {
@@ -507,7 +507,7 @@
         }
       }
     },
-    "/beans/regions": {
+    "/beans/tags/regions": {
       "get": {
         "summary": "List regions",
         "description": "Retrieves a list of unique values of geographic regions mentioned in the articles such as UK, US, Europe etc.",
@@ -571,7 +571,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.BEANS_BASE_URL}/regions"
+              "rewritePattern": "${env.BEANS_BASE_URL}/tags/regions"
             }
           },
           "policies": {
@@ -616,7 +616,7 @@
               "default": 0.75,
               "title": "Acc"
             },
-            "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
+            "description": "Cosine similarity score for vector search. Includes articles with a `cosine_similarity_score >= accuracy` in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
           },
           {
             "name": "kind",
@@ -630,10 +630,10 @@
               "type": "string",
               "title": "Kind"
             },
-            "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
+            "description": "Type of article to query: `news`, `blog`, or keep it unspecified for both."
           },
           {
-            "name": "categories",
+            "name": "tags",
             "in": "query",
             "required": false,
             "schema": {
@@ -642,37 +642,12 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "title": "Categories"
+              "examples": [
+                "[\"Artificial Intelligence\", \"UK\", \"saudi-arabia\", \"Elon-Musk\", \"#data-protection\"]"
+              ],
+              "title": "Tags"
             },
-            "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
-          },
-          {
-            "name": "entities",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 100,
-              "title": "Entities"
-            },
-            "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
-          },
-          {
-            "name": "regions",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 100,
-              "title": "Regions"
-            },
-            "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
+            "description": "Filters articles by one or more tags (combining categories, regions, and entities). Ignores case and non-alphanumeric characters, so `Data Protection`, `data PRotecTION`, `data-protection`,  and `#data-protection` are treated identically. All specified tags must match for an item to be included in results. Provides a fuzzier, more fault-tolerant alternative to case-sensitive category, region, and entity filters."
           },
           {
             "name": "sources",
@@ -820,7 +795,7 @@
               "default": 0.75,
               "title": "Acc"
             },
-            "description": "Cosine similarity score for vector search. Includes articles with a cosine similarity score >= accuracy in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
+            "description": "Cosine similarity score for vector search. Includes articles with a `cosine_similarity_score >= accuracy` in search result. The higher the accuracy the stricter the filter, meaning less items will be returned. `accuracy=1` means only exactly identical articles, `accuracy=0` means all articles regardless of similarity will be returned."
           },
           {
             "name": "kind",
@@ -834,10 +809,9 @@
               "type": "string",
               "title": "Kind"
             },
-            "description": "Type of article to query: 'news', 'blog', or keep it unspecified for both."
-          },
-          {
-            "name": "categories",
+            "description": "Type of article to query: `news`, `blog`, or keep it unspecified for both."
+          },{
+            "name": "tags",
             "in": "query",
             "required": false,
             "schema": {
@@ -846,37 +820,12 @@
                 "type": "string"
               },
               "maxItems": 100,
-              "title": "Categories"
+              "examples": [
+                "[\"Artificial Intelligence\", \"UK\", \"saudi-arabia\", \"Elon-Musk\", \"#data-protection\"]"
+              ],
+              "title": "Tags"
             },
-            "description": "Filters articles by one or more categories (case sensitive). Used for faster keyword search."
-          },
-          {
-            "name": "entities",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 100,
-              "title": "Entities"
-            },
-            "description": "Filters articles by one or more named entities (case sensitive). Used for faster keyword search."
-          },
-          {
-            "name": "regions",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "maxItems": 100,
-              "title": "Regions"
-            },
-            "description": "Filters articles by one or more regions (case sensitive). Used for faster keyword search."
+            "description": "Filters articles by one or more tags (combining categories, regions, and entities). Ignores case and non-alphanumeric characters, so `Data Protection`, `data PRotecTION`, `data-protection`,  and `#data-protection` are treated identically. All specified tags must match for an item to be included in results. Provides a fuzzier, more fault-tolerant alternative to case-sensitive category, region, and entity filters."
           },
           {
             "name": "sources",

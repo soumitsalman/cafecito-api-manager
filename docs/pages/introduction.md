@@ -31,7 +31,7 @@ curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/beans/articles/late
     -H "Authorization: Bearer YOUR-API-KEY"
 ```
 
-For real, that's it. No SDK to install. No OAuth dance. Just an HTTP call. The general pattern is:
+That's it. No SDK to install. No OAuth dance. Just an HTTP call. The general pattern is:
 
 ```bash
 curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource>?<query-params>" \
@@ -40,7 +40,7 @@ curl -X GET "https://cafecito-apis-main-948451c.d2.zuplo.dev/<product>/<resource
 
 ## MCP support
 
-Every API-based product also ships an **MCP server** — same auth, same key, zero extra setup. See the [MCP Integration guide](/howtos/mcp-howto) for full details and code samples.
+Every API-based product also ships an **MCP** endpoint — same auth, same key, zero extra setup. See the [MCP Integration guide](/howtos/mcp-howto) for full details and code samples.
 
 ## Launch Preview limits
 

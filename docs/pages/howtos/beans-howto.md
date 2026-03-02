@@ -27,7 +27,7 @@ That's right, it is an RSS feed reader (on steroid). It gives you clean, queryab
 
 - **Vector semantic search** in one endpoint — just add `q`
 - **Adjustable similarity threshold** with `acc` (0.0–1.0, default 0.75)
-- **Filters galore** — categories, entities, regions, sources, time windows
+- **Filters galore** — unified `tags` (covering categories, entities, and regions), sources, time windows
 - **Trending signals** powered by social engagement data
 - **Entity & sentiment enrichment** ready for analytics and AI pipelines
 
@@ -81,9 +81,7 @@ All metadata endpoints support pagination with `offset` (default `0`) and `limit
 | `q` | string (3–512) | Natural language search query (triggers vector search) |
 | `acc` | number (0–1) | Cosine similarity threshold — higher = stricter (default `0.75`) |
 | `kind` | `news` \| `blog` | Filter by content type |
-| `categories` | string[] | Filter by categories (case-sensitive) |
-| `entities` | string[] | Filter by named entities (case-sensitive) |
-| `regions` | string[] | Filter by regions (case-sensitive) |
+| `tags` | string[] | Filter by tags — combines categories, regions, and entities in one param. Case-insensitive and punctuation-tolerant (e.g. `AI`, `ai`, `#ai` are all equivalent). All specified tags must match. |
 | `sources` | string[] | Filter by publisher IDs (case-sensitive) |
 | `published_since` | ISO 8601 datetime | Only articles published on or after this time |
 | `with_content` | boolean | Include full article text (default `false`) |
@@ -160,13 +158,14 @@ for article in resp.json() or []:
 
 ---
 
-### 2. Latest news about China (filter by region)
+### 2. Latest news about Robotics in Saudi Arabia (filter by tags)
 
 **JavaScript**
 
 ```js
 const params = new URLSearchParams();
-params.append("regions", "China");
+params.append("tags", "Robotics");
+params.append("tags", "saudi arabia");
 params.append("kind", "news");
 params.append("limit", "10");
 
@@ -183,7 +182,7 @@ articles?.forEach((a) => console.log(a.title, "|", a.regions));
 resp = requests.get(
     f"{BASE}/beans/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
-    params={"regions": ["China"], "kind": "news", "limit": 10},
+    params={"tags": ["Robotics", "saudi arabia"], "kind": "news", "limit": 10},
     timeout=30,
 )
 resp.raise_for_status()
@@ -194,36 +193,39 @@ for article in resp.json() or []:
 
 ---
 
-### 3. Latest news about FAA (filter by entity)
+### 3. Trending blogs on large language models from Alibaba
+
+Use the trending endpoint to surface blog posts ranked by trend score (or relevance when `q` is provided).
 
 **JavaScript**
 
 ```js
 const params = new URLSearchParams();
-params.append("entities", "FAA");
-params.append("kind", "news");
+params.append("tags", "large language models");
+params.append("tags", "Alibaba");
+params.append("kind", "blog");
 params.append("limit", "10");
 
-const res = await fetch(`${BASE}/beans/articles/latest?${params}`, {
+const res = await fetch(`${BASE}/beans/articles/trending?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 const articles = await res.json();
-articles?.forEach((a) => console.log(a.title, "|", a.entities));
+articles?.forEach((a) => console.log(a.title, "|", a.source, "→", a.url));
 ```
 
 **Python**
 
 ```python
 resp = requests.get(
-    f"{BASE}/beans/articles/latest",
+    f"{BASE}/beans/articles/trending",
     headers={"Authorization": f"Bearer {API_KEY}"},
-    params={"entities": ["FAA"], "kind": "news", "limit": 10},
+    params={"tags": ["large language models", "Alibaba"], "kind": "blog", "limit": 10},
     timeout=30,
 )
 resp.raise_for_status()
 
 for article in resp.json() or []:
-    print(article.get("title"), "|", article.get("entities"))
+    print(article.get("title"), "|", article.get("source"), "→", article.get("url"))
 ```
 
 ---
@@ -333,4 +335,4 @@ print(all_sources)
 - [Beans Pricing](/pricing/beans-pricing)
 - [Beans API Reference](/api/beans)
 
-_Last updated: February 26, 2026_
+_Last updated: March 2, 2026_
