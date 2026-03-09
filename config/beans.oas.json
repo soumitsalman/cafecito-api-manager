@@ -389,7 +389,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -469,7 +468,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -549,7 +547,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -728,7 +725,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -783,7 +779,8 @@
               "title": "Kind"
             },
             "description": "Type of article to query: `news`, `blog`, or keep it unspecified for both."
-          },{
+          },
+          {
             "name": "tags",
             "in": "query",
             "required": false,
@@ -906,7 +903,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -1007,7 +1003,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -1094,7 +1089,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
@@ -1154,7 +1148,6 @@
           },
           "policies": {
             "inbound": [
-              "clerk-jwt-auth-inbound",
               "zuplo-api-key-inbound",
               "gate-auth",
               "freeuser-rate-limit-inbound",
