@@ -1,4 +1,5 @@
 import type { ZudokuConfig } from "zudoku";
+import AccountPage from "./src/AccountPage";
 
 const serverUrl = process.env.ZUDOKU_PUBLIC_GATEWAY_URL || import.meta.env.ZUPLO_SERVER_URL;
 /**
@@ -88,7 +89,7 @@ const config: ZudokuConfig = {
           ],
         },
       ],
-    },
+    },    
     {
       type: "category",
       label: "API Reference",
@@ -99,6 +100,17 @@ const config: ZudokuConfig = {
           label: "Beans",
         }
       ],
+    },
+    {
+      type: "category",
+      label: "Account",
+      items: [
+        {
+          type: "custom-page",
+          path: "/account",
+          element: <AccountPage />,
+        }
+      ]
     },
   ],
   redirects: [{ from: "/", to: "/introduction" }],
