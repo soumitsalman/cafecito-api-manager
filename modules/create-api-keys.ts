@@ -6,16 +6,18 @@ const bucketName = environment.ZUPLO_API_KEY_SERVICE_BUCKET_NAME;
 export default async function (request: ZuploRequest, context: ZuploContext) {
     const sub = request.user?.sub;
     const body = await request.json();
+    const email = body.email;
+    const subscriptionPlan = body.metadata?.subscription_plan ?? "free";
+    const subscriptionStatus = body.metadata?.subscription_status ??
+        (subscriptionPlan === "free" ? "active" : "inactive");
+
+    if (!sub || !email) {
+        context.log.error("Failed to create API key: Missing user info.");
+        return new Response("Failed to create API key: Missing user info.", { status: 404 });
+    }
 
     context.log.info("Creating API key for user:", sub);
     context.log.info("Request body:", JSON.stringify(body));
-
-    const email = body.email ?? "nobody@example.com";
-
-    const subscriptionPlan = body.metadata?.subscription_plan ?? "free";
-    const subscriptionStatus = body.metadata?.subscription_status ?? 
-        (subscriptionPlan === "free" ? "active" : "inactive");
-
     const response = await fetch(
         `https://dev.zuplo.com/v1/accounts/${accountName}/key-buckets/${bucketName}/consumers?with-api-key=true`,
         {

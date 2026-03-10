@@ -1,15 +1,21 @@
+---
+description: Getting Started - Creating API Key for Cafecito APIs
+category: "Getting Started"
+---
+import { Stepper } from "zudoku/ui/Stepper";
+
 # API Keys
 
 No keys, no data. Here's how to get yours.
 
-import { Curl, BaseUrl } from "../../src/components/Curl";
-
 ## Get a key
 
+<Stepper>
 1. Click **Login / Sign Up** in the upper-right corner (or your name if you're already signed in).
 2. Once logged in, go to your **[API Keys](/settings/api-keys)** section.
 3. Hit **Create** — give it a name (It's free during the launch preview, so might as well).
 4. Copy the key and stash it somewhere safe (environment variable, secret manager, tattoo on your arm — your call).
+</Stepper>
 
 You can create **as many keys as you want**. They all share the same rate limit and quota meter, so don't think you're gaming the system with 47000 keys.
 
@@ -23,11 +29,12 @@ Authorization: Bearer YOUR-API-KEY
 
 Example:
 
-<Curl path="/beans/health" />
-
-The general call pattern for any Cafecito product:
-
-<Curl path="/<product>/<resource>" query="<query-params>" />
+<CodeTabs>
+```sh
+curl -X GET "https://api.cafecito.tech/beans/articles/latest?tags=us&sources=techcrunch" \
+-H "Authorization: Bearer YOUR-API-KEY"
+```
+</CodeTabs>
 
 ## Works for MCP too
 
@@ -64,4 +71,4 @@ All your keys share the same meter. Creating more keys doesn't give you more quo
 - [Beans API](/howtos/beans-howto)
 - [Beans API Reference](/api/beans)
 
-_Last updated: March 2, 2026_
+_Last updated: March 9, 2026_

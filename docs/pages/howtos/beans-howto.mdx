@@ -1,9 +1,8 @@
 ---
-sidebar_label: Beans
+description: Getting Started - Using Beans API
+navigation_label: Beans
 category: "Getting Started"
 ---
-
-import { Curl, BaseUrl } from "../../src/components/Curl";
 
 ![Beans banner](/beans-banner.png)
 
@@ -48,7 +47,24 @@ All Beans endpoints live under the `/beans` path prefix.
 
 ### Health check
 
-<Curl path="/beans/health" method="GET" />
+<CodeTabs syncKey="beans-api">
+```js
+const BASE_URL = "https://api.cafecito.tech/beans"; // or read from env
+const res = await fetch(`${BASE_URL}/health`);
+const resp = await res.json();
+// do stuff
+```
+
+```python
+import requests
+
+BASE_URL = "https://api.cafecito.tech/beans"
+resp = requests.get(f"{BASE_URL}/health")
+resp.raise_for_status()
+
+body = resp.json()['status']
+```
+</CodeTabs>
 
 ### Discovery / metadata
 
@@ -97,16 +113,26 @@ Beans endpoints are exposed as MCP tools for AI agent integration. See the [MCP 
 
 Below are real-world examples. Replace `YOUR-API-KEY` with the key you generated in the [developer portal](/).
 
-### 1. Latest news on market performance & economy (published today)
-
-**Base URL:** <BaseUrl />
-
-**JavaScript**
-
+<CodeTabs syncKey="beans-api">
 ```js
 const API_KEY = process.env.CAFECITO_API_KEY;
-const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app"; // or read from env
+const BASE_URL = "https://api.cafecito.tech/beans"; // or read from env
+```
 
+```python
+import os
+
+API_KEY = os.environ["CAFECITO_API_KEY"]
+BASE_URL = "https://api.cafecito.tech/beans"
+```
+</CodeTabs>
+
+### 1. Latest news on market performance & economy (published today)
+
+**Base URL:** `https://api.cafecito.tech/beans`
+
+<CodeTabs syncKey="beans-api">
+```js
 const today = new Date().toISOString().split("T")[0] + "T00:00:00Z";
 
 const params = new URLSearchParams({
@@ -116,7 +142,7 @@ const params = new URLSearchParams({
   limit: "10",
 });
 
-const res = await fetch(`${BASE}/beans/articles/latest?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/latest?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 
@@ -125,19 +151,14 @@ const articles = await res.json();
 articles?.forEach((a) => console.log(a.title, "→", a.url));
 ```
 
-**Python**
-
 ```python
-import os, requests
+import requests
 from datetime import date
-
-API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
 
 today = date.today().isoformat() + "T00:00:00Z"
 
 resp = requests.get(
-    f"{BASE}/beans/articles/latest",
+    f"{BASE_URL}/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
     params={
         "q": "market performance and economy",
@@ -152,16 +173,14 @@ resp.raise_for_status()
 for article in resp.json() or []:
     print(article.get("title"), "→", article.get("url"))
 ```
+</CodeTabs>
 
 ---
 
 ### 2. Latest news about Robotics in Saudi Arabia (filter by tags)
 
-**JavaScript**
-
+<CodeTabs syncKey="beans-api">
 ```js
-const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app"; // from env or Curl component
-const API_KEY = process.env.CAFECITO_API_KEY;
 
 const params = new URLSearchParams();
 params.append("tags", "Robotics");
@@ -169,23 +188,18 @@ params.append("tags", "saudi arabia");
 params.append("kind", "news");
 params.append("limit", "10");
 
-const res = await fetch(`${BASE}/beans/articles/latest?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/latest?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 const articles = await res.json();
 articles?.forEach((a) => console.log(a.title, "|", a.regions));
 ```
 
-**Python**
-
 ```python
-import os, requests
-
-API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+import requests
 
 resp = requests.get(
-    f"{BASE}/beans/articles/latest",
+    f"{BASE_URL}/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
     params={"tags": ["Robotics", "saudi arabia"], "kind": "news", "limit": 10},
     timeout=30,
@@ -195,6 +209,7 @@ resp.raise_for_status()
 for article in resp.json() or []:
     print(article.get("title"), "|", article.get("regions"))
 ```
+</CodeTabs>
 
 ---
 
@@ -202,35 +217,27 @@ for article in resp.json() or []:
 
 Use the trending endpoint to surface blog posts ranked by trend score (or relevance when `q` is provided).
 
-**JavaScript**
+<CodeTabs syncKey="beans-api">
 
 ```js
-const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
-const API_KEY = process.env.CAFECITO_API_KEY;
-
 const params = new URLSearchParams();
 params.append("tags", "large language models");
 params.append("tags", "Alibaba");
 params.append("kind", "blog");
 params.append("limit", "10");
 
-const res = await fetch(`${BASE}/beans/articles/trending?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/trending?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 const articles = await res.json();
 articles?.forEach((a) => console.log(a.title, "|", a.source, "→", a.url));
 ```
 
-**Python**
-
 ```python
-import os, requests
-
-API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+import requests
 
 resp = requests.get(
-    f"{BASE}/beans/articles/trending",
+    f"{BASE_URL}/articles/trending",
     headers={"Authorization": f"Bearer {API_KEY}"},
     params={"tags": ["large language models", "Alibaba"], "kind": "blog", "limit": 10},
     timeout=30,
@@ -240,39 +247,35 @@ resp.raise_for_status()
 for article in resp.json() or []:
     print(article.get("title"), "|", article.get("source"), "→", article.get("url"))
 ```
+</CodeTabs>
 
 ---
 
 ### 4. Filter by publisher — news from [Barchart](https://www.barchart.com) only
 
-**JavaScript**
+<CodeTabs syncKey="beans-api">
+
 
 ```js
-const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
-const API_KEY = process.env.CAFECITO_API_KEY;
-
 const params = new URLSearchParams();
 params.append("sources", "barchart");
 params.append("kind", "news");
 params.append("limit", "10");
 
-const res = await fetch(`${BASE}/beans/articles/latest?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/latest?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 const articles = await res.json();
 articles?.forEach((a) => console.log(a.source, "—", a.title));
 ```
 
-**Python**
+
 
 ```python
-import os, requests
-
-API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+import requests
 
 resp = requests.get(
-    f"{BASE}/beans/articles/latest",
+    f"{BASE_URL}/articles/latest",
     headers={"Authorization": f"Bearer {API_KEY}"},
     params={"sources": ["barchart"], "kind": "news", "limit": 10},
     timeout=30,
@@ -282,24 +285,21 @@ resp.raise_for_status()
 for article in resp.json() or []:
     print(article.get("source"), "—", article.get("title"))
 ```
+</CodeTabs>
 
 ---
 
 ### 5. List all publishers (IDs / domain names)
 
-**JavaScript**
-
+<CodeTabs syncKey="beans-api">
 ```js
-const BASE = "https://cafecito-apis-dev-1f87489.zuplo.app";
-const API_KEY = process.env.CAFECITO_API_KEY;
-
 let offset = 0;
 const limit = 100;
 const allSources = [];
 
 while (true) {
   const res = await fetch(
-    `${BASE}/beans/publishers/sources?offset=${offset}&limit=${limit}`,
+    `${BASE_URL}/publishers/sources?offset=${offset}&limit=${limit}`,
     { headers: { Authorization: `Bearer ${API_KEY}` } },
   );
   const batch = await res.json();
@@ -312,13 +312,8 @@ console.log(`Total publishers: ${allSources.length}`);
 console.log(allSources);
 ```
 
-**Python**
-
 ```python
-import os, requests
-
-API_KEY = os.environ["CAFECITO_API_KEY"]
-BASE = os.environ.get("PUBLIC_GATEWAY_URL", "https://cafecito-apis-dev-1f87489.zuplo.app")
+import requests
 
 all_sources = []
 offset = 0
@@ -326,7 +321,7 @@ limit = 100
 
 while True:
     resp = requests.get(
-        f"{BASE}/beans/publishers/sources",
+        f"{BASE_URL}/publishers/sources",
         headers={"Authorization": f"Bearer {API_KEY}"},
         params={"offset": offset, "limit": limit},
         timeout=30,
@@ -341,7 +336,7 @@ while True:
 print(f"Total publishers: {len(all_sources)}")
 print(all_sources)
 ```
-
+</CodeTabs>
 ---
 
 ## Best practices
