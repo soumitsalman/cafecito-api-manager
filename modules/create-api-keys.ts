@@ -1,5 +1,4 @@
 import { ZuploContext, ZuploRequest, environment } from "@zuplo/runtime";
-import { StatusCodes } from "http-status-codes";
 
 const accountName = environment.ZUPLO_ACCOUNT_NAME;
 const bucketName = environment.ZUPLO_API_KEY_SERVICE_BUCKET_NAME;
@@ -14,7 +13,7 @@ export default async function (request: ZuploRequest, context: ZuploContext) {
 
     if (!sub || !email) {
         context.log.error("Failed to create API key: Missing user info.");
-        return new Response("Failed to create API key: Missing user info.", { status: StatusCodes.NOT_FOUND });
+        return new Response("Failed to create API key: Missing user info.", { status: 404 });
     }
 
     context.log.info("Creating API key for user:", sub);
