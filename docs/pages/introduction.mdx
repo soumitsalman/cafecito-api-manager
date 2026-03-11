@@ -1,33 +1,28 @@
 ---
-title: Cafecito Media APIs and MCPs
-description: Cafecito Media APIs — automate the nonsense so you can do your actual job.
+title: Cafecito Developer Portal
+description: Cafecito Developer Portal - the home base for our media product suite APIs & MCPs. Project Cafecito builds business automation that cut through the noise so you don't have to. We automate the nonsense so you can do your actual job.
 navigation_label: Welcome
 navigation_icon: coffee
 ---
 import { Stepper } from "zudoku/ui/Stepper";
+import { Badge } from "zudoku/ui/Badge";
 
 ![Cafecito banner](/cafecito-banner.png)
 
 # Cafecito Developer Portal
 
-Welcome to the **Cafecito** developer portal — the home base for our media product suite. We build APIs & MCPs that cut through the noise so you don't have to.
+## Le Menu
+| Product  | Status | Features |
+| --- | --- | --- |
+| **[Beans](/howtos/beans-howto)** News & Blogs | <Badge variant="default">Live</Badge> | 7,000+ Publishers, Semantic Search, Trend Signals, Propagation Timeline. |
+| **[Espresso](/howtos/espresso-howto)** Market Intelligence | <Badge variant="secondary">Coming Soon</Badge> | Stay tuned for launch updates. |
+| **[Cortado](/howtos/cortado-howto)** Social Media Automation | <Badge variant="secondary">Coming Soon</Badge> | Stay tuned for launch updates. |
 
-> **🚀 Launch Preview — FREE until June 30, 2026.** Sign up costs nothing. APIs cost nothing. Go Loco!
-
-## What's on the menu
-
-| Product | Status | What it does |
-| ------- | ------ | ------------ |
-| [**Beans**](/howtos/beans-howto) | ✅ Live | News & blogs — 7 000+ publishers, semantic search, trend signals |
-| **Espresso** | 🔜 Coming soon | Espresso curated intelligence |
-| **Cortado** | 🔜 Coming soon | Social media monkey (on crack) |
-
-## Get started in 37 seconds
+## Get Started in 37 Seconds
 
 <Stepper>
-1. **Sign up** — it's free and you are already here.
-2. **[Create an API key](/settings/api-keys)** — make as many as you want, they all share the same meter.
-3. **Call something** — `https://api.cafecito.tech` is the base url for everything.
+1. **[Create an API key](/settings/api-keys)** — make as many as you want, they all share the same meter.
+2. **Call something** — `https://api.cafecito.tech` is the base url for everything.
 <CodeTabs>
 ```bash
 curl -X GET "https://api.cafecito.tech/<product>/<path>?<query-params>" \
@@ -48,13 +43,14 @@ That's it. No SDK to install. No OAuth dance. Just an HTTP call. The general pat
 
 </Stepper>
 
-## MCP support
-
+## MCP Support
 Every API-based product also ships an **MCP** endpoint — same auth, same key, zero extra setup. See the [MCP Integration guide](/howtos/mcp-howto) for full details and code samples.
 
-## Launch Preview limits
+## Launch Preview
 
-During the preview (now through **June 30, 2026**) every account gets:
+:::tip
+**🚀 FREE Launch Preview until June 30, 2026.**
+:::
 
 | | |
 | --- | --- |
@@ -63,19 +59,5 @@ During the preview (now through **June 30, 2026**) every account gets:
 | **Price** | $0 |
 
 You can create unlimited API keys — they all count toward the same rate limit and quota.
-
-## Dive deeper
-
-- [API Keys & Auth](/howtos/api-keys)
-- [Beans API Guide](/howtos/beans-howto)
-- [MCP Integration](/howtos/mcp-howto)
-- [Beans API Reference](/api/beans)
-- [Pricing](/pricing/beans-pricing)
-
-## Company stuff
-
-- [About Us (our mess)](/company/about-us)
-- [Privacy Policy](/company/privacy-policy)
-- [Terms of Use](/company/terms-of-use)
 
 _Last updated: March 2, 2026_

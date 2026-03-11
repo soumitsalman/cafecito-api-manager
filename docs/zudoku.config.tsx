@@ -1,7 +1,8 @@
 import type { ZudokuConfig } from "zudoku";
 import AccountPage from "./src/AccountPage";
 
-const serverUrl = process.env.ZUDOKU_PUBLIC_GATEWAY_URL || import.meta.env.ZUPLO_SERVER_URL;
+const serverUrl =
+  process.env.ZUDOKU_PUBLIC_GATEWAY_URL || import.meta.env.ZUPLO_SERVER_URL;
 /**
  * Developer Portal Configuration
  * For more information, see:
@@ -28,14 +29,14 @@ const config: ZudokuConfig = {
       label: "Documentation",
       items: [
         {
-              type: "doc",
-              file: "introduction",
+          type: "doc",
+          file: "introduction",
         },
         {
           type: "category",
           label: "Getting Started",
           icon: "puzzle",
-          items: [            
+          items: [
             {
               type: "doc",
               file: "howtos/api-keys",
@@ -43,7 +44,7 @@ const config: ZudokuConfig = {
             {
               type: "doc",
               file: "howtos/beans-howto",
-            },            
+            },
             {
               type: "doc",
               file: "howtos/espresso-howto",
@@ -51,9 +52,9 @@ const config: ZudokuConfig = {
             {
               type: "doc",
               file: "howtos/cortado-howto",
-            }
-          ]
-        },        
+            },
+          ],
+        },
         {
           type: "doc",
           file: "howtos/mcp-howto",
@@ -89,7 +90,7 @@ const config: ZudokuConfig = {
           ],
         },
       ],
-    },    
+    },
     {
       type: "category",
       label: "API Reference",
@@ -98,7 +99,7 @@ const config: ZudokuConfig = {
           type: "link",
           to: "/api/beans",
           label: "Beans",
-        }
+        },
       ],
     },
     {
@@ -109,8 +110,8 @@ const config: ZudokuConfig = {
           type: "custom-page",
           path: "/account",
           element: <AccountPage />,
-        }
-      ]
+        },
+      ],
     },
   ],
   redirects: [{ from: "/", to: "/introduction" }],
@@ -119,7 +120,7 @@ const config: ZudokuConfig = {
       type: "file",
       input: "../config/beans.oas.json",
       path: "api/beans",
-    }
+    },
   ],
   authentication: {
     type: "clerk",
@@ -129,22 +130,25 @@ const config: ZudokuConfig = {
   apiKeys: {
     enabled: true,
     createKey: async ({ apiKey, context, auth }) => {
-      const createApiKeyRequest = new Request(serverUrl + "/v1/developer/api-key", {
-        method: "POST",
-        body: JSON.stringify({
-          ...apiKey,
-          email: auth.profile?.email,
-          metadata: {
-            userId: auth.profile?.sub,
-            name: auth.profile?.name,
-            subscription_plan: auth.profile?.subscription_plan,
-            subscription_status: auth.profile?.subscription_status,
+      const createApiKeyRequest = new Request(
+        serverUrl + "/v1/developer/api-key",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            ...apiKey,
+            email: auth.profile?.email,
+            metadata: {
+              userId: auth.profile?.sub,
+              name: auth.profile?.name,
+              subscription_plan: auth.profile?.subscription_plan,
+              subscription_status: auth.profile?.subscription_status,
+            },
+          }),
+          headers: {
+            "Content-Type": "application/json",
           },
-        }),
-        headers: {
-          "Content-Type": "application/json",
         },
-      });
+      );
 
       const response = await fetch(
         await context.signRequest(createApiKeyRequest),

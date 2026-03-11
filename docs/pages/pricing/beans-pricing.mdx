@@ -2,14 +2,13 @@
 sidebar_label: Beans
 category: "Pricing"
 ---
-
 # Beans Pricing
 
+:::tip
+**🚀 FREE Launch Preview until June 30, 2026.** Sign up costs nothing. APIs & MCPs cost nothing. Go Loco!
+:::
+
 We like simple.
-
-## Launch Preview (now through June 30, 2026)
-
-Everything is **free**. Sign up, grab a key, call the APIs. That's it.
 
 | | |
 | --- | --- |
@@ -21,7 +20,7 @@ You can create unlimited API keys — they all count toward the same meter.
 
 > After the launch preview ends, we'll announce paid plans. We'll keep it straightforward — no point systems, no surprise surcharges, no PhD required to read the pricing page.
 
-## What's included (all of it)
+## What's Included (all of it)
 
 - Keyword search and semantic / vector search
 - Metadata endpoints (categories, entities, regions, sources)
@@ -32,8 +31,7 @@ You can create unlimited API keys — they all count toward the same meter.
 
 All of that. For free. During the preview.
 
-## How metering works
-
+## How Metering Works
 - Metering is **per API call**. One request = one tick on the meter.
 - Response size, number of returned items — **doesn't matter**. Same cost.
 - MCP calls count the same as regular API calls.
@@ -42,10 +40,15 @@ All of that. For free. During the preview.
 - **Free calls that don't tick the meter:** `/health` checks and [API key](/settings/api-keys) creation. Ping us all day, we don't care.
 - **Failed requests don't count either.** If you get a 4xx or 5xx status code, that's on us (or your typo) — it won't tick the meter.
 
-## What happens when you hit the limit
+<Callout type="info" title="Separate Metering per Product">
+    Metering buckets are separate for each product. Even with the same API key, we track usage separately for each product. Beans API & MCP metering is separate from Cortado or Espresso.
+</Callout>
+
+## How to Increase Rate Limit Quota
+Upgrade to the next tier. Upgrade options will exist after the launch preview.
 
 - **Rate limit exceeded?** Back off for a second, err make it a minute.
-- **Quota exhausted?** You're done until the next billing month. Upgrade options will exist after the preview.
+- **Quota exhausted?** You're done until the next billing month. 
 
 There's **no soft limit** — when you hit it, you hit it.
 
