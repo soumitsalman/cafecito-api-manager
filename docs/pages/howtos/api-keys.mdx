@@ -11,13 +11,17 @@ No keys, no data. Here's how to get yours.
 ## Get a key
 
 <Stepper>
-1. Click **Login / Sign Up** in the upper-right corner (or your name if you're already signed in).
-2. Once logged in, go to your **[API Keys](/settings/api-keys)** section.
+1. Click **Login** in the upper-right corner
+2. Once signed-in, click **[API Keys](/settings/api-keys)** section.
 3. Hit **Create** — give it a name (It's free during the launch preview, so might as well).
 4. Copy the key and stash it somewhere safe (environment variable, secret manager, tattoo on your arm — your call).
 </Stepper>
 
-You can create **as many keys as you want**. They all share the same rate limit and quota meter, so don't think you're gaming the system with 47000 keys.
+You can create **as many keys as you want**. For each product they share the same rate limit and quota meter. Don't think you're gaming the system with 37,000 keys 😉.
+
+:::info{title="One API Key, Multiple Products"}
+Same API Key would work for all Cafecito API & MCP products. But as a best practice, consider using different keys for different apps or environments (dev vs. prod) to keep things organized and secure.
+:::
 
 ## Use it in requests
 
