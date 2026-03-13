@@ -12,6 +12,7 @@
   "dependencies": {
     "http-status-codes": "^2.3.0",
     "svix": "^1.45.0",
+    "zudoku": "^0.71.2",
     "zuplo": "^6"
   },
   "devDependencies": {

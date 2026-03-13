@@ -3,34 +3,23 @@ description: Getting Started - Using Beans API
 navigation_label: Beans
 category: "Getting Started"
 ---
+import { Badge } from "zudoku/ui/Badge";
 
 ![Beans banner](/beans-banner.png)
 
 # Beans API & MCP
 
-**Version:** 0.1 &nbsp;|&nbsp; **Status:** Live
+<Badge variant="default">Version: 0.1</Badge><Badge variant="default">Live</Badge>
 
-It's a news and blog API sourcing data from **7 000+ publishers** — business, finance, tech, corporate blogs, and broader global topics. Think of it as a fire hose of content that somebody already cleaned up for you.
-
-## What Beans actually does
-
-Under the hood our pipeline (**Barista** — yes, we like coffee names) continuously ingests and tags content with:
-
-- **Category/topic** tags
-- **Sentiment** analysis
-- **Extracted Entities** — people, companies, regions, products
-- **Social media engagement signals** for trend relevance
-- **Related-article linking** across publishers
-
-That's right, it is an RSS feed reader (on steroid). It gives you clean, queryable JSON so you can search, rank, monitor, and build whatever you what.
+Beans is a news and blog aggregator. It collects data from **7 000+ sources/publishers** every day.
 
 ## Key features
 
-- **Vector semantic search** in one endpoint — just add `q`
-- **Adjustable similarity threshold** with `acc` (0.0–1.0, default 0.75)
-- **Filters galore** — unified `tags` (covering categories, entities, and regions), sources, time windows
-- **Trending signals** powered by social engagement data
-- **Entity & sentiment enrichment** ready for analytics and AI pipelines
+- **Vector semantic search** — Natural language queries with configurable accuracy thresholds
+- **Comprehensive filtering** — By tags (categories, entities, regions), sources, and time ranges
+- **Entity & sentiment enrichment** — Automatic extraction of sentiment, named entities, and metadata optimized for analytics and AI pipelines
+- **Trend scoring** — Articles ranked by social engagement metrics for relevance and timeliness
+- **Cross-publisher linking** — Related articles mapped across the entire feed
 
 ## Authentication
 
@@ -45,63 +34,76 @@ All Beans endpoints live under the `/beans` path prefix.
 
 ## Core endpoints
 
-### Health check
+### Articles
 
-<CodeTabs syncKey="beans-api">
-```js
-const BASE_URL = "https://api.cafecito.tech/beans"; // or read from env
-const res = await fetch(`${BASE_URL}/health`);
-const resp = await res.json();
-// do stuff
-```
+| Endpoint | Description |
+| -------- | ----------- |
+| `GET /beans/articles/top-headlines` | Top trending headlines from past 24 hours, ranked by trend score |
+| `GET /beans/articles/latest` | Most recently published articles, sorted by publish date (newest first) |
+| `GET /beans/articles/trending` | Trending articles ranked by trend score (based on social engagement) |
+| `GET /beans/articles/search` | Semantic or tag-based search across all articles in the database |
 
-```python
-import requests
+### Sources
 
-BASE_URL = "https://api.cafecito.tech/beans"
-resp = requests.get(f"{BASE_URL}/health")
-resp.raise_for_status()
+| Endpoint | Description |
+| -------- | ----------- |
+| `GET /beans/sources` | Retrieves detailed metadata for sources (site name, description, favicon) |
 
-body = resp.json()['status']
-```
-</CodeTabs>
+### Tags / Metadata
 
-### Discovery / metadata
+| Endpoint | Description |
+| -------- | ----------- |
+| `GET /beans/tags/categories` | Paginated list of unique article categories/topics |
+| `GET /beans/tags/entities` | Paginated list of named entities (persons, orgs, products, places) |
+| `GET /beans/tags/regions` | Paginated list of geographic regions mentioned in articles |
 
-| Endpoint | What you get |
-| -------- | ------------ |
-| `GET /beans/categories` | Unique article categories (AI, Cybersecurity, Politics …) |
-| `GET /beans/entities` | Named entities (people, orgs, products) |
-| `GET /beans/regions` | Geographic regions mentioned in articles |
-| `GET /beans/publishers/sources` | Publisher IDs / domain names we ingest from |
-| `GET /beans/publishers` | Full publisher metadata for given IDs |
+:::info{title="Pagination"}
+All metadata endpoints support `offset` (default 0) and `limit` (default 16, max 128).
+:::
 
-All metadata endpoints support pagination with `offset` (default `0`) and `limit` (default `16`, max `100`).
+## Query Parameters
 
-### Search articles
+### Articles
 
-| Endpoint | Sorting |
-| -------- | ------- |
-| `GET /beans/articles/latest` | By relevance (when `q` provided), otherwise newest first |
-| `GET /beans/articles/trending` | By relevance (when `q` provided), otherwise by trend score |
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `q` | string (3–512) | Optional semantic search query (natural language, triggers vector embedding) |
+| `acc` | number (0–1) | Embedding accuracy/similarity threshold — higher = stricter match (default `0.75`) |
+| `content_type` | string | Content type filter: `news`, `blog`, `post`, `comment`, etc. |
+| `tags` | string[] | Case/whitespace-insensitive filter across categories, regions, entities combined (recommended). E.g., `AI`, `ai`, `#ai` are equivalent. AND combination. |
+| `categories` | string[] | Precise category topic filters — inclusive OR, case/whitespace-sensitive |
+| `regions` | string[] | Precise geographic region filters — inclusive OR, case/whitespace-sensitive |
+| `entities` | string[] | Precise named entity filters — inclusive OR, case/whitespace-sensitive |
+| `sources` | string[] | Publisher/source ID filters — inclusive OR |
+| `from` | date (YYYY-MM-DD) | **Latest/Trending only:** Articles published/trending since this date (defaults to 7 days ago) |
+| `full_content` | boolean | Include full article text (default `false`) — large payload |
+| `limit` | integer (1–128) | Results per page (default `16`) |
+| `offset` | integer | Pagination offset — number of items to skip (default `0`) |
 
-**Query parameters:**
+**Response:** `200 OK` → array of article objects.
 
-| Param | Type | Description |
-| ----- | ---- | ----------- |
-| `q` | string (3–512) | Natural language search query (triggers vector search) |
-| `acc` | number (0–1) | Cosine similarity threshold — higher = stricter (default `0.75`) |
-| `kind` | `news` \| `blog` | Filter by content type |
-| `tags` | string[] | Filter by tags — combines categories, regions, and entities in one param. Case-insensitive and punctuation-tolerant (e.g. `AI`, `ai`, `#ai` are all equivalent). All specified tags must match. |
-| `sources` | string[] | Filter by publisher IDs (case-sensitive) |
-| `published_since` | ISO 8601 datetime | Only articles published on or after this time |
-| `with_content` | boolean | Include full article text (default `false`) |
-| `offset` | integer | Pagination offset |
-| `limit` | integer (1–100) | Results per page (default `16`) |
+### Sources
 
-**Response:** `200 OK` → array of `Bean` objects (or `null`).
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `sources` | string[] | **Required.** Source IDs to fetch metadata for (CSV, case-sensitive) |
+| `limit` | integer (1–128) | Items per page (default `16`) |
+| `offset` | integer | Pagination offset (default `0`) |
 
-Each `Bean` includes: `url`, `kind`, `source`, `title`, `summary`, `content`, `image_url`, `author`, `created`, `entities`, `regions`, `categories`, `sentiments`.
+**Response:** `200 OK` → array of `Publisher` objects.
+
+### Tags / Metadata
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `limit` | integer (1–128) | Items per page (default `16`) |
+| `offset` | integer | Pagination offset (default `0`) |
+
+**Response:** `200 OK` → array of strings.
+
+:::info
+Checkout [API reference](/api/beans) for more details.
+:::
 
 ### MCP server
 
@@ -127,18 +129,79 @@ BASE_URL = "https://api.cafecito.tech/beans"
 ```
 </CodeTabs>
 
-### 1. Latest news on market performance & economy (published today)
-
-**Base URL:** `https://api.cafecito.tech/beans`
+### 1. Health check — verify service is operational
 
 <CodeTabs syncKey="beans-api">
 ```js
-const today = new Date().toISOString().split("T")[0] + "T00:00:00Z";
+const res = await fetch(`${BASE_URL.replace('/beans', '')}/beans/health`, {
+  headers: { Authorization: `Bearer ${API_KEY}` },
+});
 
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const status = await res.json();
+console.log("Service status:", status);
+```
+
+```python
+import requests
+
+resp = requests.get(
+    f"{BASE_URL.replace('/beans', '')}/beans/health",
+    headers={"Authorization": f"Bearer {API_KEY}"},
+    timeout=30,
+)
+resp.raise_for_status()
+
+print("Service status:", resp.json())
+```
+</CodeTabs>
+
+---
+
+### 2. Top headlines from the last 24 hours
+
+Get trending headlines ranked by trend score, perfect for building breaking news dashboards.
+
+<CodeTabs syncKey="beans-api">
+```js
+const params = new URLSearchParams({
+  limit: "10",
+});
+
+const res = await fetch(`${BASE_URL}/articles/top-headlines?${params}`, {
+  headers: { Authorization: `Bearer ${API_KEY}` },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const headlines = await res.json();
+headlines?.forEach((h) => console.log(h.title, "→", h.url));
+```
+
+```python
+import requests
+
+resp = requests.get(
+    f"{BASE_URL}/articles/top-headlines",
+    headers={"Authorization": f"Bearer {API_KEY}"},
+    params={"limit": 10},
+    timeout=30,
+)
+resp.raise_for_status()
+
+for headline in resp.json() or []:
+    print(headline.get("title"), "→", headline.get("url"))
+```
+</CodeTabs>
+
+---
+
+### 3. Latest news on market performance & economy (published in last 7 days)
+
+<CodeTabs syncKey="beans-api">
+```js
 const params = new URLSearchParams({
   q: "market performance and economy",
-  kind: "news",
-  published_since: today,
+  content_type: "news",
   limit: "10",
 });
 
@@ -153,17 +216,13 @@ articles?.forEach((a) => console.log(a.title, "→", a.url));
 
 ```python
 import requests
-from datetime import date
-
-today = date.today().isoformat() + "T00:00:00Z"
 
 resp = requests.get(
     f"{BASE_URL}/articles/latest",
-    headers={"Authorization": f"Bearer {API_KEY}"},
+    headers={"Authorization": f"Bearer ${API_KEY}"},
     params={
         "q": "market performance and economy",
-        "kind": "news",
-        "published_since": today,
+        "content_type": "news",
         "limit": 10,
     },
     timeout=30,
@@ -177,18 +236,19 @@ for article in resp.json() or []:
 
 ---
 
-### 2. Latest news about Robotics in Saudi Arabia (filter by tags)
+### 4. Trending news on Robotics in Saudi Arabia
+
+Use the trending endpoint to surface content ranked by social engagement signals and trend score.
 
 <CodeTabs syncKey="beans-api">
 ```js
-
 const params = new URLSearchParams();
 params.append("tags", "Robotics");
 params.append("tags", "saudi arabia");
-params.append("kind", "news");
+params.append("content_type", "news");
 params.append("limit", "10");
 
-const res = await fetch(`${BASE_URL}/articles/latest?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/trending?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
 const articles = await res.json();
@@ -199,9 +259,9 @@ articles?.forEach((a) => console.log(a.title, "|", a.regions));
 import requests
 
 resp = requests.get(
-    f"{BASE_URL}/articles/latest",
+    f"{BASE_URL}/articles/trending",
     headers={"Authorization": f"Bearer {API_KEY}"},
-    params={"tags": ["Robotics", "saudi arabia"], "kind": "news", "limit": 10},
+    params={"tags": ["Robotics", "saudi arabia"], "content_type": "news", "limit": 10},
     timeout=30,
 )
 resp.raise_for_status()
@@ -213,138 +273,153 @@ for article in resp.json() or []:
 
 ---
 
-### 3. Trending blogs on large language models from Alibaba
+### 5. Semantic search on archive — find articles about AI safety concerns
 
-Use the trending endpoint to surface blog posts ranked by trend score (or relevance when `q` is provided).
+Search across all articles using natural language and retrieve full content for RAG/summarization.
 
 <CodeTabs syncKey="beans-api">
-
 ```js
-const params = new URLSearchParams();
-params.append("tags", "large language models");
-params.append("tags", "Alibaba");
-params.append("kind", "blog");
-params.append("limit", "10");
+const params = new URLSearchParams({
+  q: "AI safety risks and concerns",
+  acc: "0.8",
+  full_content: "true",
+  limit: "5",
+});
 
-const res = await fetch(`${BASE_URL}/articles/trending?${params}`, {
+const res = await fetch(`${BASE_URL}/articles/search?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
-const articles = await res.json();
-articles?.forEach((a) => console.log(a.title, "|", a.source, "→", a.url));
+
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const results = await res.json();
+results?.forEach((a) => {
+  console.log(`${a.title} [trend_score: ${a.trend_score}]`);
+  console.log(`  → ${a.source} (${a.likes} likes, ${a.shares} shares)`);
+  console.log(`  URL: ${a.url}\n`);
+});
 ```
 
 ```python
 import requests
 
 resp = requests.get(
-    f"{BASE_URL}/articles/trending",
+    f"{BASE_URL}/articles/search",
     headers={"Authorization": f"Bearer {API_KEY}"},
-    params={"tags": ["large language models", "Alibaba"], "kind": "blog", "limit": 10},
+    params={
+        "q": "AI safety risks and concerns",
+        "acc": 0.8,
+        "full_content": True,
+        "limit": 5,
+    },
     timeout=30,
 )
 resp.raise_for_status()
 
 for article in resp.json() or []:
-    print(article.get("title"), "|", article.get("source"), "→", article.get("url"))
+    print(f"{article.get('title')} [trend_score: {article.get('trend_score')}]")
+    print(f"  → {article.get('source')} ({article.get('likes')} likes, {article.get('shares')} shares)")
+    print(f"  URL: {article.get('url')}\n")
 ```
 </CodeTabs>
 
 ---
 
-### 4. Filter by publisher — news from [Barchart](https://www.barchart.com) only
+### 6. Get sources metadata
+
+Retrieve site names, descriptions, and favicon URLs for a set of publishers.
 
 <CodeTabs syncKey="beans-api">
-
-
 ```js
 const params = new URLSearchParams();
 params.append("sources", "barchart");
-params.append("kind", "news");
-params.append("limit", "10");
+params.append("sources", "reuters");
+params.append("sources", "techcrunch");
 
-const res = await fetch(`${BASE_URL}/articles/latest?${params}`, {
+const res = await fetch(`${BASE_URL}/publishers?${params}`, {
   headers: { Authorization: `Bearer ${API_KEY}` },
 });
-const articles = await res.json();
-articles?.forEach((a) => console.log(a.source, "—", a.title));
+
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const publishers = await res.json();
+publishers?.forEach((p) => {
+  console.log(`${p.source_site_name}`);
+  console.log(`  ID: ${p.source}`);
+  console.log(`  URL: ${p.source_base_url}`);
+  console.log(`  Description: ${p.source_description}\n`);
+});
 ```
-
-
 
 ```python
 import requests
 
 resp = requests.get(
-    f"{BASE_URL}/articles/latest",
+    f"{BASE_URL}/publishers",
     headers={"Authorization": f"Bearer {API_KEY}"},
-    params={"sources": ["barchart"], "kind": "news", "limit": 10},
+    params={"sources": ["barchart", "reuters", "techcrunch"]},
     timeout=30,
 )
 resp.raise_for_status()
 
-for article in resp.json() or []:
-    print(article.get("source"), "—", article.get("title"))
+for publisher in resp.json() or []:
+    print(f"{publisher.get('source_site_name')}")
+    print(f"  ID: {publisher.get('source')}")
+    print(f"  URL: {publisher.get('source_base_url')}")
+    print(f"  Description: {publisher.get('source_description')}\n")
 ```
 </CodeTabs>
 
 ---
 
-### 5. List all publishers (IDs / domain names)
+### 9. List article categories with pagination
+
+Retrieve all unique categories/topics in the database.
 
 <CodeTabs syncKey="beans-api">
 ```js
-let offset = 0;
-const limit = 100;
-const allSources = [];
+const params = new URLSearchParams({
+  limit: "50",
+  offset: "0",
+});
 
-while (true) {
-  const res = await fetch(
-    `${BASE_URL}/publishers/sources?offset=${offset}&limit=${limit}`,
-    { headers: { Authorization: `Bearer ${API_KEY}` } },
-  );
-  const batch = await res.json();
-  if (!batch || batch.length === 0) break;
-  allSources.push(...batch);
-  offset += limit;
-}
+const res = await fetch(`${BASE_URL}/tags/categories?${params}`, {
+  headers: { Authorization: `Bearer ${API_KEY}` },
+});
 
-console.log(`Total publishers: ${allSources.length}`);
-console.log(allSources);
+if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const categories = await res.json();
+console.log("Article categories:");
+categories?.forEach((cat) => console.log(`  - ${cat}`));
 ```
 
 ```python
 import requests
 
-all_sources = []
-offset = 0
-limit = 100
+resp = requests.get(
+    f"{BASE_URL}/tags/categories",
+    headers={"Authorization": f"Bearer {API_KEY}"},
+    params={"limit": 50, "offset": 0},
+    timeout=30,
+)
+resp.raise_for_status()
 
-while True:
-    resp = requests.get(
-        f"{BASE_URL}/publishers/sources",
-        headers={"Authorization": f"Bearer {API_KEY}"},
-        params={"offset": offset, "limit": limit},
-        timeout=30,
-    )
-    resp.raise_for_status()
-    batch = resp.json() or []
-    if not batch:
-        break
-    all_sources.extend(batch)
-    offset += limit
-
-print(f"Total publishers: {len(all_sources)}")
-print(all_sources)
+categories = resp.json() or []
+print("Article categories:")
+for cat in categories:
+    print(f"  - {cat}")
 ```
 </CodeTabs>
+
 ---
 
 ## Best practices
 
 - **Start with `acc=0.75`**, then tweak up for precision or down for recall.
-- **Use `published_since`** to keep feeds fresh — nobody wants yesterday's news. (Well, sometimes they do, but you get the point.)
-- **Use `with_content=true`** when you need full text for RAG / summarization.
-- **Paginate** with `offset` + `limit` for stable ingestion pipelines.
+- **Use `from` parameter** to keep feeds fresh — specify YYYY-MM-DD dates (e.g., `from=2026-03-10`).
+- **Use `full_content=true`** sparingly — requests will be slower and payload larger; great for RAG/summarization pipelines.
+- **Paginate with `offset` + `limit`** for stable ingestion pipelines and monitoring.
+- **Use `tags` parameter** (recommended) for flexible filtering across categories, regions, and entities in one parameter.
+- **Use precise filters** (`categories`, `regions`, `entities`) only when you need exact matches (case-sensitive).
+- **Combine search (`q`) with filters** — semantic search + tag filters = powerful precision.
 
 ## Use cases that aren't boring
 
@@ -359,4 +434,4 @@ print(all_sources)
 - [Beans Pricing](/pricing/beans-pricing)
 - [Beans API Reference](/api/beans)
 
-_Last updated: March 2, 2026_
+_Last updated: March 13, 2026_
