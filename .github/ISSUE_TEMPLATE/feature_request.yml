@@ -53,9 +53,13 @@ body:
       label: Use Case / Scenario
       description: Describe a specific use case or scenario where this feature would be valuable.
       placeholder: "As a data analyst, I need to track news coverage of specific events within defined time windows to correlate with market movements."
+    validations:
+      required: false
   - type: textarea
     id: context
     attributes:
       label: Additional context
       description: Add any other context, screenshots, examples, or information that helps explain the feature request.
       placeholder: "Similar functionality exists in competitor APIs like NewsAPI. Here's a link to their documentation: [link]"
+    validations:
+      required: false

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💡 Feature Request
+    url: https://github.com/soumitsalman/cafecito-api-manager/issues/new?template=feature_request
+    about: Suggest a new feature or improvement
+  - name: 🐞 Bug Report
+    url: https://github.com/soumitsalman/cafecito-api-manager/issues/new?template=bug_report
+    about: Report a bug or unexpected behavior

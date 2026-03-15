@@ -51,6 +51,8 @@ body:
       label: API Endpoint (if applicable)
       description: The specific API endpoint URL path that is failing.
       placeholder: "/beans/articles/search"
+    validations:
+      required: false
   - type: textarea
     id: request
     attributes:
@@ -63,6 +65,8 @@ body:
         - Authorization: Bearer [REDACTED]
         - Content-Type: application/json
         Body: (none)
+    validations:
+      required: false
   - type: textarea
     id: response
     attributes:
@@ -71,11 +75,15 @@ body:
       placeholder: |
         Status Code: 500
         Response Body: {"error": "Internal server error"}
+    validations:
+      required: false
   - type: textarea
     id: logs
     attributes:
       label: Screenshots / Logs
       description: If applicable, add screenshots, log files, or other evidence of the issue.
+    validations:
+      required: false
   - type: textarea
     id: environment
     attributes:
