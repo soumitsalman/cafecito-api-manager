@@ -1,8 +1,8 @@
 ---
 navigation_label: MCP
 navigation_icon: brain-circuit
-# navigation_icon_dark: /mcp-dark.svg
 description: Cafecito MCP (Model Context Protocol) Integration Guide
+category: General
 ---
 
 # MCP Integration
@@ -10,19 +10,19 @@ description: Cafecito MCP (Model Context Protocol) Integration Guide
 Every Cafecito API product ships an **MCP (Model Context Protocol) server** — same auth, same key, zero extra setup. Point your AI agent or MCP client at the endpoint and go.
 
 ## Authentication
-
+<Button className="btn-with-link" asChild>
+  <a href="/settings/api-keys">Get API Key</a>
+</Button>
+:::tip
 Your existing API key works for MCP calls — they share the same rate limit and quota meter as regular API calls.
-
-```
-Authorization: Bearer YOUR-API-KEY
-```
+:::
 
 ## Connecting to MCP Servers
 **Server URL**: `https://api.cafecito.tech/<product>/mcp` 
 
-:::info{title="Same API Key"}
-Your existing API keys work for MCP calls too. They share the same rate limit and quota meter for that product.
-:::
+```
+Authorization: Bearer YOUR-API-KEY
+```
 
 ## Beans MCP server
 **Server URL**: `https://api.cafecito.tech/beans/mcp`
@@ -68,10 +68,7 @@ print(result.final_output)
 - AI agents that monitor trends, entities, or topics in real time
 - LLM pipelines that require enrichment-ready JSON, not raw HTML
 
-## Related docs
-
-- [Cafecito Introduction](/introduction)
-- [Beans API Guide](/howtos/beans-howto)
-- [Beans API Reference](/api/beans)
-
-_Last updated: March 13, 2026_
+## Related
+- [Cafecito](https://cafecito.tech)
+- [Pricing](/pricing)
+- [Contact](/contact)

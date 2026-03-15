@@ -1,0 +1,61 @@
+name: 💡 Feature Request
+about: Suggest a new idea or improvement
+title: "[Feature] "
+labels: enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: A clear description of the problem or pain point this feature would address.
+      placeholder: "Example: The current Beans API search doesn't support filtering by publication date ranges, making it difficult to analyze news trends over specific time periods."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the solution you'd like
+      description: What should happen? Be as specific as possible about the proposed implementation.
+      placeholder: "Add date range parameters (start_date, end_date) to the /beans/articles/search endpoint that accept ISO 8601 date strings and filter results accordingly."
+    validations:
+      required: true
+  - type: dropdown
+    id: product
+    attributes:
+      label: Affected Product
+      description: Which Cafecito product would this feature enhance?
+      options:
+        - Beans (News & Blogs API)
+        - Espresso (Market Intelligence API)
+        - Cortado (Social Media Automation API)
+        - MCP Integration
+        - Developer Portal
+        - General/Platform
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - New API Endpoint
+        - Enhancement to Existing Endpoint
+        - New MCP Feature
+        - Documentation Improvement
+        - SDK/Library Enhancement
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Use Case / Scenario
+      description: Describe a specific use case or scenario where this feature would be valuable.
+      placeholder: "As a data analyst, I need to track news coverage of specific events within defined time windows to correlate with market movements."
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add any other context, screenshots, examples, or information that helps explain the feature request.
+      placeholder: "Similar functionality exists in competitor APIs like NewsAPI. Here's a link to their documentation: [link]"

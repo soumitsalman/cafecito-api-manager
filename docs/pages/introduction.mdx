@@ -1,18 +1,20 @@
 ---
 title: Cafecito Developer Portal
-description: Cafecito Developer Portal - the home base for our media product suite APIs & MCPs. Project Cafecito builds business automation that cut through the noise so you don't have to. We automate the nonsense so you can do your actual job.
+description: Project Cafecito Developer Portal - Coffee-fueled AI products for news intelligence, market analysis, social automation, and more. Meet Beans, Espresso, Cortado, and MediCafe — APIs and MCPs that automate the nonsense so you can focus on real work.
 navigation_label: Welcome
 navigation_icon: coffee
+category: General
 ---
+
 ![Cafecito banner](/cafecito-banner.png)
 
 import { Stepper } from "zudoku/ui/Stepper";
 import { Badge } from "zudoku/ui/Badge";
 
 ## Serving Fresh
-| Product  | Status | Features |
+| Product | Status | Features |
 | --- | --- | --- |
-| **[Beans](/howtos/beans-howto)** News & Blogs | <Badge variant="default">Live</Badge> | 7,000+ Publishers, Semantic Search, Trend Signals, Propagation Timeline. |
+| **[Beans](/howtos/beans-howto)** News & Blogs | <Badge className="badge-live">Live</Badge> | 7,000+ Publishers, Semantic Search, Trend Signals, Propagation Timeline. |
 | **[Espresso](/howtos/espresso-howto)** Market Intelligence | <Badge variant="secondary">Coming Soon</Badge> | Stay tuned for launch updates. |
 | **[Cortado](/howtos/cortado-howto)** Social Media Automation | <Badge variant="secondary">Coming Soon</Badge> | Stay tuned for launch updates. |
 
@@ -21,6 +23,7 @@ import { Badge } from "zudoku/ui/Badge";
 <Stepper>
 1. **[Create an API key](/settings/api-keys)** — make as many as you want, they all share the same meter.
 2. **Call something** — `https://api.cafecito.tech` is the base url for everything.
+
 <CodeTabs>
 ```bash
 curl -X GET "https://api.cafecito.tech/<product>/<path>?<query-params>" \
@@ -57,5 +60,3 @@ Every API-based product also ships an **MCP** endpoint — same auth, same key, 
 | **Price** | $0 |
 
 You can create unlimited API keys — they all count toward the same rate limit and quota.
-
-_Last updated: March 13, 2026_
