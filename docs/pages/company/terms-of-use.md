@@ -52,5 +52,3 @@ We may update these terms. We'll post changes here. Continued use after changes 
 7683 SE 27th St. #188
 Mercer Island, WA 98040
 United States
-
-_Last updated: February 26, 2026_

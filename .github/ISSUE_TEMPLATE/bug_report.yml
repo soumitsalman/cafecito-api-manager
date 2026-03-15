@@ -1,0 +1,98 @@
+name: Bug Report
+about: Report a bug in the system.
+title: "[BUG]: "
+labels: bug
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is. Include what you were trying to do and what went wrong.
+      placeholder: "Example: When calling the Beans API search endpoint, the response returns empty results even though articles exist for the query."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide step-by-step instructions to reproduce the issue.
+      placeholder: |
+        1. Make a GET request to `https://api.cafecito.tech/beans/articles/search?q=coffee&limit=10`
+        2. Include Authorization header with valid API key
+        3. Observe the response
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should have happened instead?
+      placeholder: "Expected to receive a JSON array of articles matching the search query."
+    validations:
+      required: true
+  - type: dropdown
+    id: product
+    attributes:
+      label: Affected Product
+      description: Which Cafecito product is experiencing the issue?
+      options:
+        - API Keys
+        - Beans
+        - Espresso
+        - Cortado
+        - MCP
+        - Developer Portal
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: API Endpoint (if applicable)
+      description: The specific API endpoint URL path that is failing.
+      placeholder: "/beans/articles/search"
+    validations:
+      required: false
+  - type: textarea
+    id: request
+    attributes:
+      label: Request Details
+      description: Include the HTTP method, full URL, headers, and request body (if any). Redact sensitive information like API keys.
+      placeholder: |
+        Method: GET
+        URL: https://api.cafecito.tech/beans/articles/search?q=test
+        Headers:
+        - Authorization: Bearer [REDACTED]
+        - Content-Type: application/json
+        Body: (none)
+    validations:
+      required: false
+  - type: textarea
+    id: response
+    attributes:
+      label: Response/Error Details
+      description: Include the HTTP status code, response headers, and response body. For errors, include any error messages.
+      placeholder: |
+        Status Code: 500
+        Response Body: {"error": "Internal server error"}
+    validations:
+      required: false
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots / Logs
+      description: If applicable, add screenshots, log files, or other evidence of the issue.
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Provide details about your environment and when the issue occurred.
+      placeholder: |
+        - Browser/Tool: curl 7.68.0, Postman, Python requests
+        - Operating System: Ubuntu 20.04
+        - Approx. date/time: 2024-01-15 14:30 UTC
+        - API Key type: (if relevant)
+    validations:
+      required: true

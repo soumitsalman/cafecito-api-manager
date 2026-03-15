@@ -38,5 +38,3 @@ Project Cafecito is a media product suite with real APIs that real developers ca
 ## Yell at Us
 
 Complain, praise, or just say hi — we might even read it. (No guarantees.)
-
-_Last updated: February 26, 2026_
