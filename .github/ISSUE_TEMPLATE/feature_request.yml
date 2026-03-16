@@ -1,7 +1,8 @@
 name: 💡 Feature Request
-about: Suggest a new idea or improvement
+description: Suggest a new idea or improvement
 title: "[Feature] "
-labels: enhancement
+labels: ["feature", "triage"]
+type: feature
 body:
   - type: textarea
     id: problem
@@ -22,14 +23,13 @@ body:
   - type: dropdown
     id: product
     attributes:
-      label: Affected Product
+      label: Product Scope
       description: Which Cafecito product would this feature enhance?
       options:
-        - Beans (News & Blogs API)
-        - Espresso (Market Intelligence API)
-        - Cortado (Social Media Automation API)
-        - MCP Integration
-        - Developer Portal
+        - Beans
+        - Espresso
+        - Cortado
+        - MCP
         - General/Platform
     validations:
       required: true
@@ -42,8 +42,7 @@ body:
         - New API Endpoint
         - Enhancement to Existing Endpoint
         - New MCP Feature
-        - Documentation Improvement
-        - SDK/Library Enhancement
+        - Documentation Improvement        
         - Other
     validations:
       required: true
@@ -60,6 +59,6 @@ body:
     attributes:
       label: Additional context
       description: Add any other context, screenshots, examples, or information that helps explain the feature request.
-      placeholder: "Similar functionality exists in competitor APIs like NewsAPI. Here's a link to their documentation: [link]"
+      placeholder: "Similar functionality exists in competitor APIs. Here's a link to their documentation: [link]"
     validations:
       required: false
