@@ -27,4 +27,6 @@
   "workspaces": [
     "docs"
   ]
+  ,
+  "license": "MIT"
 }

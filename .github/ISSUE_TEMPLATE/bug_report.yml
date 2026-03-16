@@ -2,7 +2,6 @@ name: Bug Report
 description: Report a bug in the system.
 title: "[BUG]: "
 labels: ["bug", "triage"]
-type: bug
 body:
   - type: textarea
     id: description
