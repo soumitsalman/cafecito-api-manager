@@ -16,6 +16,8 @@ const config: ZudokuConfig = {
         light: "/cafecito-light-v2.png",
         dark: "/cafecito-dark-v2.png",
       },
+      alt: "Project Cafecito Logo",
+      width: "60px",
     },    
   },
   docs: {    
