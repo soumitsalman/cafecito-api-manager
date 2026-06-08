@@ -996,7 +996,7 @@
             "export": "urlRewriteHandler",
             "module": "$import(@zuplo/runtime)",
             "options": {
-              "rewritePattern": "${env.ESPRESSO_BASE_URL}/related/{relationship}"
+              "rewritePattern": "${env.ESPRESSO_BASE_URL}/related/${params.relationship}"
             }
           },
           "policies": {
