@@ -185,6 +185,11 @@ const config: ZudokuConfig = {
           to: "/api/beans",
           label: "Beans",
         },
+        {
+          type: "link",
+          to: "/api/espresso",
+          label: "Espresso",
+        },
       ],
     },
     {
@@ -205,6 +210,11 @@ const config: ZudokuConfig = {
       type: "file",
       input: "../config/beans.oas.json",
       path: "api/beans",
+    },
+    {
+      type: "file",
+      input: "../config/espresso.oas.json",
+      path: "api/espresso",
     },
   ],
   authentication: {
