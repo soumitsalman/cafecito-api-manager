@@ -64,6 +64,12 @@ type Configuration struct {
 	APIKeys  map[string]string
 }
 
+type beanCollectionParams interface {
+	bindableParams
+	createPageRequest(c *gin.Context, r *Configuration) (*db.PageRequest, error)
+	createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error)
+}
+
 // createPageRequest creates a PageRequest for db from given pagination params and validates the cursor.
 func (p *paginationParams) createPageRequest(c *gin.Context, config *Configuration) (*db.PageRequest, error) {
 	if p.Limit == 0 {
@@ -77,9 +83,8 @@ func (p *paginationParams) createPageRequest(c *gin.Context, config *Configurati
 }
 
 // toDBFilters converts router-level article filter params to db-level Filters.
-func (p *articleFilterParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
+func (p *articleScopeParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
 	filters := db.BeanFilters{
-		Kind:              strings.ToLower(p.ContentType),
 		Sources:           p.Sources,
 		ExcludeSources:    p.ExcludeSources,
 		Domains:           utils.NormalizeTexts(p.Domains),
@@ -92,29 +97,27 @@ func (p *articleFilterParams) createFilters(c *gin.Context, r *Configuration) (*
 		Entities:          utils.NormalizeTags(p.Entities),
 		Regions:           utils.NormalizeTags(p.Regions),
 		FullContent:       p.FullContent,
+		Language:          utils.NormalizeText(p.Language),
 	}
 	return &filters, nil
 }
 
-func (p *topHeadlinesParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
-	filters := db.BeanFilters{
-		Sources:           p.Sources,
-		ExcludeSources:    p.ExcludeSources,
-		Domains:           utils.NormalizeTexts(p.Domains),
-		ExcludeDomains:    utils.NormalizeTexts(p.ExcludeDomains),
-		Authors:           p.Authors,
-		Tags:              utils.NormalizeTags(p.Tags),
-		Categories:        utils.NormalizeTags(p.Categories),
-		ExcludeCategories: utils.NormalizeTags(p.ExcludeCategories),
-		Sentiments:        utils.NormalizeTags(p.Sentiments),
-		Entities:          utils.NormalizeTags(p.Entities),
-		Regions:           utils.NormalizeTags(p.Regions),
-		FullContent:       p.FullContent,
-	}
-	if err := p.vectorSearchParams.attachToFilters(c, r, &filters); err != nil {
+func (p *articleFilterParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
+	filters, _ := p.articleScopeParams.createFilters(c, r)
+	filters.Kind = strings.ToLower(p.ContentType)
+	return filters, nil
+}
+
+func (p *articleSearchParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
+	filters, _ := p.articleFeedParams.createFilters(c, r)
+	filters.IDs = p.IDs
+	filters.URLs = p.URLs
+	filters.CreatedFrom = p.From
+	filters.CreatedTo = utils.NormalizeEndOfDay(p.To)
+	if err := p.vectorSearchParams.attachToFilters(c, r, filters); err != nil {
 		return nil, err
 	}
-	return &filters, nil
+	return filters, nil
 }
 
 func (p *articleFeedParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
@@ -125,12 +128,8 @@ func (p *articleFeedParams) createFilters(c *gin.Context, r *Configuration) (*db
 	return filters, nil
 }
 
-func (p *articleSearchParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
-	filters, _ := p.articleFeedParams.createFilters(c, r)
-	filters.IDs = p.IDs
-	filters.URLs = p.URLs
-	filters.CreatedFrom = p.From
-	filters.CreatedTo = utils.NormalizeEndOfDay(p.To)
+func (p *topHeadlinesParams) createFilters(c *gin.Context, r *Configuration) (*db.BeanFilters, error) {
+	filters, _ := p.articleScopeParams.createFilters(c, r)
 	if err := p.vectorSearchParams.attachToFilters(c, r, filters); err != nil {
 		return nil, err
 	}
@@ -301,16 +300,7 @@ func (r *Configuration) health(c *gin.Context) {
 // @Router /articles/search [get]
 func (r *Configuration) searchArticles(c *gin.Context) {
 	var params articleSearchParams
-	if err := params.shouldBind(c); err != nil {
-		writeError(c, err)
-		return
-	}
-	page_req, err := params.createPageRequest(c, r)
-	if err != nil {
-		writeError(c, err)
-		return
-	}
-	filters, err := params.createFilters(c, r)
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
 		return
@@ -333,7 +323,7 @@ func (r *Configuration) searchArticles(c *gin.Context) {
 // @Produce json
 // @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
 // @Param score_threshold query number false "Required when q is supplied." minimum(0) maximum(1)
-// @Param content_type query string false "Filterable Article type. post is response-only and returns 400." Enums(blog,contract,earnings_report,enforcement_action,financial_report,lawsuit,news,official_statement,podcast,press_release,research_paper,site,technical_documentation,whitepaper)
+// @Param content_type query string false "Filterable Article type." Enums(blog,contract,earnings_report,enforcement_action,financial_report,lawsuit,news,official_statement,podcast,press_release,research_paper,site,technical_documentation,whitepaper)
 // @Param sources query []string false "Source UUIDs to include (CSV)." collectionFormat(csv)
 // @Param exclude_sources query []string false "Source UUIDs to exclude (CSV)." collectionFormat(csv)
 // @Param domains query []string false "Source domains to include (CSV)." collectionFormat(csv)
@@ -355,29 +345,11 @@ func (r *Configuration) searchArticles(c *gin.Context) {
 // @Router /articles/latest [get]
 func (r *Configuration) getLatestArticles(c *gin.Context) {
 	var params articleFeedParams
-	if err := params.shouldBind(c); err != nil {
-		writeError(c, err)
-		return
-	}
-	page_req, err := params.createPageRequest(c, r)
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
 		return
 	}
-	filters, err := params.createFilters(c, r)
-	if err != nil {
-		writeError(c, err)
-		return
-	}
-
-	// if params.From.IsZero() {
-	// 	filters.CreatedFrom = time.Now().AddDate(0, 0, -DEFAULT_WINDOW)
-	// } else {
-	// 	filters.CreatedFrom = params.From
-	// }
-	// if !params.To.IsZero() {
-	// 	filters.CreatedTo = params.To
-	// }
 
 	page_out, err := r.DB.QueryLatestBeans(c.Request.Context(), *filters, *page_req, db.BEAN_COLUMNS_WITHOUT_TREND)
 	if err != nil {
@@ -396,7 +368,7 @@ func (r *Configuration) getLatestArticles(c *gin.Context) {
 // @Produce json
 // @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
 // @Param score_threshold query number false "Required when q is supplied." minimum(0) maximum(1)
-// @Param content_type query string false "Filterable Article type. post is response-only and returns 400." Enums(blog,contract,earnings_report,enforcement_action,financial_report,lawsuit,news,official_statement,podcast,press_release,research_paper,site,technical_documentation,whitepaper)
+// @Param content_type query string false "Filterable Article type." Enums(blog,contract,earnings_report,enforcement_action,financial_report,lawsuit,news,official_statement,podcast,press_release,research_paper,site,technical_documentation,whitepaper)
 // @Param sources query []string false "Source UUIDs to include (CSV)." collectionFormat(csv)
 // @Param exclude_sources query []string false "Source UUIDs to exclude (CSV)." collectionFormat(csv)
 // @Param domains query []string false "Source domains to include (CSV)." collectionFormat(csv)
@@ -418,29 +390,100 @@ func (r *Configuration) getLatestArticles(c *gin.Context) {
 // @Router /articles/trending [get]
 func (r *Configuration) getTrendingArticles(c *gin.Context) {
 	var params articleFeedParams
-	if err := params.shouldBind(c); err != nil {
-		writeError(c, err)
-		return
-	}
-	page_req, err := params.createPageRequest(c, r)
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
 		return
 	}
-	filters, err := params.createFilters(c, r)
+	page_out, err := r.DB.QueryTrendingBeans(c.Request.Context(), *filters, *page_req, db.BEAN_COLUMNS_WITH_TREND)
 	if err != nil {
-		writeError(c, err)
+		utils.LogError(err, "[ERROR] QueryTrendingBeans")
+		writeError(c, utils.NewAPIError(utils.API_ERROR_DB_ERROR, API_ERROR_MSG_OUR_BAD))
 		return
 	}
+	writeCollection(c, toArticleDocuments(page_out.Items), page_req.Limit, page_out.NextCursor)
+}
 
-	// if params.From.IsZero() {
-	// 	filters.UpdatedFrom = time.Now().AddDate(0, 0, -DEFAULT_WINDOW)
-	// } else {
-	// 	filters.UpdatedFrom = params.From
-	// }
-	// if !params.To.IsZero() {
-	// 	filters.UpdatedTo = params.To
-	// }
+// getLatestNews godoc
+// @Summary List latest news
+// @Description Returns News ordered newest first. This is an alias for /articles/latest.
+// @Tags News
+// @Security BackendAPIKey
+// @Produce json
+// @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
+// @Param score_threshold query number false "Required when q is supplied." minimum(0) maximum(1)
+// @Param sources query []string false "Source UUIDs to include (CSV)." collectionFormat(csv)
+// @Param exclude_sources query []string false "Source UUIDs to exclude (CSV)." collectionFormat(csv)
+// @Param domains query []string false "Source domains to include (CSV)." collectionFormat(csv)
+// @Param exclude_domains query []string false "Source domains to exclude (CSV)." collectionFormat(csv)
+// @Param authors query []string false "Author text filters (CSV)." collectionFormat(csv)
+// @Param categories query []string false "Category values (CSV)." collectionFormat(csv)
+// @Param exclude_categories query []string false "Excluded category values (CSV)." collectionFormat(csv)
+// @Param regions query []string false "Region values (CSV)." collectionFormat(csv)
+// @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
+// @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
+// @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param full_content query bool false "Include content when available." default(false)
+// @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
+// @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
+// @Success 200 {object} ArticleCollectionResponse
+// @Failure 400 {object} ErrorResponse "Invalid parameters"
+// @Failure 500 {object} ErrorResponse "Service unavailable"
+// @ID getLatestNews
+// @Router /news/latest [get]
+func (r *Configuration) getLatestNews(c *gin.Context) {
+	var params articleFeedParams
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
+	if err != nil {
+		writeError(c, err)
+		return
+	}
+	filters.Kind = "news"
+
+	page_out, err := r.DB.QueryLatestBeans(c.Request.Context(), *filters, *page_req, db.BEAN_COLUMNS_WITHOUT_TREND)
+	if err != nil {
+		utils.LogError(err, "[ERROR] QueryBeans")
+		writeError(c, utils.NewAPIError(utils.API_ERROR_DB_ERROR, API_ERROR_MSG_OUR_BAD))
+		return
+	}
+	writeCollection(c, toArticleDocuments(page_out.Items), page_req.Limit, page_out.NextCursor)
+}
+
+// getTrendingNews godoc
+// @Summary List trending news
+// @Description Returns attention-ranked News with trend metrics when available. This an alias for /articles/trending?content_type=news.
+// @Tags News
+// @Security BackendAPIKey
+// @Produce json
+// @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
+// @Param score_threshold query number false "Required when q is supplied." minimum(0) maximum(1)
+// @Param sources query []string false "Source UUIDs to include (CSV)." collectionFormat(csv)
+// @Param exclude_sources query []string false "Source UUIDs to exclude (CSV)." collectionFormat(csv)
+// @Param domains query []string false "Source domains to include (CSV)." collectionFormat(csv)
+// @Param exclude_domains query []string false "Source domains to exclude (CSV)." collectionFormat(csv)
+// @Param authors query []string false "Author text filters (CSV)." collectionFormat(csv)
+// @Param categories query []string false "Category values (CSV)." collectionFormat(csv)
+// @Param exclude_categories query []string false "Excluded category values (CSV)." collectionFormat(csv)
+// @Param regions query []string false "Region values (CSV)." collectionFormat(csv)
+// @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
+// @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
+// @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param full_content query bool false "Include content when available." default(false)
+// @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
+// @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
+// @Success 200 {object} ArticleCollectionResponse
+// @Failure 400 {object} ErrorResponse "Invalid parameters"
+// @Failure 500 {object} ErrorResponse "Service unavailable"
+// @ID getTrendingNews
+// @Router /news/trending [get]
+func (r *Configuration) getTrendingNews(c *gin.Context) {
+	var params articleFeedParams
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
+	if err != nil {
+		writeError(c, err)
+		return
+	}
+	filters.Kind = "news"
 
 	page_out, err := r.DB.QueryTrendingBeans(c.Request.Context(), *filters, *page_req, db.BEAN_COLUMNS_WITH_TREND)
 	if err != nil {
@@ -451,8 +494,8 @@ func (r *Configuration) getTrendingArticles(c *gin.Context) {
 	writeCollection(c, toArticleDocuments(page_out.Items), page_req.Limit, page_out.NextCursor)
 }
 
-// getTopHeadlinesArticles is the B04 GET /news/top-headlines target scaffold.
-// Primary difference between this and getTrendingArticles and getTopHeadlines is the window of time and content type.
+// getTopHeadlines is the B04 GET /news/top-headlines target scaffold.
+// Primary difference between getTrendingArticles and getTopHeadlines is the window of time (last 24 hours) and content type (news).
 // getTopHeadlines is always fixed within the last 24 hours and `news` content type. The returned news are created and trending in the last 24 hours.
 // The result excludes content unless explicitly requested.
 // getTopHeadlines godoc
@@ -484,21 +527,11 @@ func (r *Configuration) getTrendingArticles(c *gin.Context) {
 // @Router /news/top-headlines [get]
 func (r *Configuration) getTopHeadlines(c *gin.Context) {
 	var params topHeadlinesParams
-	if err := params.shouldBind(c); err != nil {
-		writeError(c, err)
-		return
-	}
-	page_req, err := params.createPageRequest(c, r)
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
 		return
 	}
-	filters, err := params.createFilters(c, r)
-	if err != nil {
-		writeError(c, err)
-		return
-	}
-
 	filters.CreatedFrom = time.Now().AddDate(0, 0, -MIN_WINDOW)
 	filters.ObservedFrom = time.Now().AddDate(0, 0, -MIN_WINDOW)
 	filters.Kind = "news"
@@ -510,6 +543,22 @@ func (r *Configuration) getTopHeadlines(c *gin.Context) {
 		return
 	}
 	writeCollection(c, toArticleDocuments(page_out.Items), page_req.Limit, page_out.NextCursor)
+}
+
+// in routes.go — replaces the broken getBeanFiltersAndPage
+func extractBeanFiltersAndPage[P beanCollectionParams](r *Configuration, c *gin.Context, p P) (*db.BeanFilters, *db.PageRequest, error) {
+	if err := p.shouldBind(c); err != nil {
+		return nil, nil, err
+	}
+	page_req, err := p.createPageRequest(c, r)
+	if err != nil {
+		return nil, nil, err
+	}
+	filters, err := p.createFilters(c, r)
+	if err != nil {
+		return nil, nil, err
+	}
+	return filters, page_req, nil
 }
 
 // getArticle godoc
@@ -577,16 +626,7 @@ func (r *Configuration) getArticle(c *gin.Context) {
 // @Router /articles/{id}/similar [get]
 func (r *Configuration) getSimilarArticles(c *gin.Context) {
 	var params similarArticlesParams
-	if err := params.shouldBind(c); err != nil {
-		writeError(c, err)
-		return
-	}
-	page_req, err := params.createPageRequest(c, r)
-	if err != nil {
-		writeError(c, err)
-		return
-	}
-	filters, err := params.createFilters(c, r)
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
 		return
@@ -940,7 +980,8 @@ func (r *Configuration) getStory(c *gin.Context) {
 // @Router /stories/{id}/articles [get]
 func (r *Configuration) getStoryArticles(c *gin.Context) {
 	var params storyArticleParams
-	if err := params.shouldBind(c); err != nil {
+	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
+	if err != nil {
 		writeError(c, err)
 		return
 	}
@@ -952,17 +993,6 @@ func (r *Configuration) getStoryArticles(c *gin.Context) {
 	}
 	if !exists {
 		writeError(c, utils.NewAPIError(utils.API_ERROR_NOT_FOUND, API_ERROR_MSG_STORY_NOT_FOUND))
-		return
-	}
-
-	page_req, err := params.createPageRequest(c, r)
-	if err != nil {
-		writeError(c, err)
-		return
-	}
-	filters, err := params.createFilters(c, r)
-	if err != nil {
-		writeError(c, err)
 		return
 	}
 
@@ -1027,9 +1057,13 @@ func NewRouter(db *db.PGSack, embedder embedding.Embedder, api_keys map[string]s
 
 	// HEADLINES routes
 	protected.GET("/news/top-headlines", config.getTopHeadlines)
+	protected.GET("/news/latest", config.getLatestNews)
+	protected.GET("/news/trending", config.getTrendingNews)
 
 	// STORIES routes. Wildcard captures URL-like story IDs (slashes); trailing /articles is membership.
 	protected.GET("/stories", config.getStories)
+	// protected.GET("/stories/latest", config.getStories)
+	// protected.GET("/stories/trending", config.getStories)
 	protected.GET("/stories/:id", config.getStory)
 	protected.GET("/stories/:id/articles", config.getStoryArticles)
 

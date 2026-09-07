@@ -90,7 +90,7 @@ const (
 )
 
 const (
-	_CLUSTER_BEAN_COLUMNS_MINIMAL = "id, url, created, title, source_id, base_url, domain_name, site_name, cluster_id"
+	_CLUSTER_BEAN_COLUMNS_MINIMAL = "id, url, created, title, summary, source_id, base_url, domain_name, site_name, cluster_id"
 )
 
 const (
@@ -141,6 +141,7 @@ type Bean struct {
 	Content    sql.NullString `db:"content"`
 	SourceID   uuid.UUID      `db:"source_id"`
 	BaseURL    string         `db:"base_url"`
+	Language   sql.NullString `db:"language"`
 	SourceProperties
 	TrendProperties
 	Distance sql.NullFloat64 `db:"distance"`
@@ -197,6 +198,7 @@ type clusterBase struct {
 type Cluster struct {
 	clusterBase
 	Title        string    `db:"title"`
+	Summary      string    `db:"summary"`
 	FirstCreated time.Time `db:"first_created"`
 	BeanCount    int       `db:"bean_count"`
 	SourceCount  int       `db:"source_count"`
@@ -230,6 +232,7 @@ type BeanFilters struct {
 	Sentiments        []string
 	Entities          []string
 	Regions           []string
+	Language          string
 	FullContent       bool
 	Embedding         []float32
 	Distance          float64

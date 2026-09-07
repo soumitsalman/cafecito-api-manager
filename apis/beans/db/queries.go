@@ -127,6 +127,10 @@ func buildScalarWhere(filters *BeanFilters) ([]string, pgx.NamedArgs) {
 		where = append(where, "sentiments && @sentiments")
 		params["sentiments"] = filters.Sentiments
 	}
+	if filters.Language != "" {
+		where = append(where, "language = @language")
+		params["language"] = filters.Language
+	}
 	if filters.ClusterID != uuid.Nil {
 		where = append(where, "cluster_id = @cluster_id")
 		params["cluster_id"] = filters.ClusterID

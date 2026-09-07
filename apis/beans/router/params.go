@@ -17,6 +17,10 @@ const (
 	MAX_FILTER_VALUES    = 128
 )
 
+type bindableParams interface {
+	shouldBind(c *gin.Context) error
+}
+
 // paginationParams is embedded by collection requests for B01, B03-B07, B12,
 // and B14-B18. B02, B10, and B13 are detail routes without collection pagination.
 type paginationParams struct {
@@ -110,6 +114,7 @@ type articleScopeParams struct {
 	Entities          []string    `form:"entities" collection_format:"csv" binding:"max=100"`
 	Regions           []string    `form:"regions" collection_format:"csv" binding:"max=100"`
 	FullContent       bool        `form:"full_content,default=false"`
+	Language          string      `form:"language"`
 }
 
 // articleFilterParams contains the non-query, non-identity Article filters

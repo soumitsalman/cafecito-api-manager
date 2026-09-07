@@ -103,7 +103,6 @@ type Trend struct {
 type ArticleDocument struct {
 	ID         uuid.UUID       `json:"id" swaggertype:"string" format:"uuid"`
 	URL        string          `json:"url"`
-	// Kind is the stored Article type. post may appear in responses but is not a valid request filter.
 	Kind       string          `json:"content_type" enums:"blog,contract,earnings_report,enforcement_action,financial_report,lawsuit,news,official_statement,podcast,post,press_release,research_paper,site,technical_documentation,whitepaper"`
 	Created    time.Time       `json:"published_at" swaggertype:"string" format:"date-time"`
 	Author     *string         `json:"author"`
@@ -111,6 +110,7 @@ type ArticleDocument struct {
 	Title      *string         `json:"title"`
 	Summary    *string         `json:"summary"`
 	Content    *string         `json:"content,omitempty"`
+	Language   *string         `json:"language,omitempty"`
 	Categories []string        `json:"categories"`
 	Regions    []string        `json:"regions"`
 	Entities   []string        `json:"entities"`
@@ -137,6 +137,7 @@ func toArticleDocument(bean *db.Bean) *ArticleDocument {
 		Title:      nullStringPtr(bean.Title),
 		Summary:    nullStringPtr(bean.Summary),
 		Content:    nullStringPtr(bean.Content),
+		Language:   nullStringPtr(bean.Language),
 		StoryID:    bean.ClusterID,
 		Trend:      nullArticleTrendPtr(bean),
 		Source:     nullArticleSourcePtr(bean),
@@ -341,6 +342,7 @@ func toStoryArticlePreview(bean *db.Bean) StoryArticlePreviewDocument {
 type StoryDocument struct {
 	ID               uuid.UUID                     `json:"id"`
 	Title            string                        `json:"title"`
+	Summary          string                        `json:"summary,omitempty"`
 	FirstPublishedAt time.Time                     `json:"first_published_at" swaggertype:"string" format:"date-time"`
 	LastPublishedAt  time.Time                     `json:"last_published_at" swaggertype:"string" format:"date-time"`
 	ArticleCount     int                           `json:"article_count"`
@@ -367,6 +369,7 @@ func toStoryDocument(story *db.Cluster) StoryDocument {
 	return StoryDocument{
 		ID:               story.ID,
 		Title:            story.Title,
+		Summary:          story.Summary,
 		FirstPublishedAt: story.FirstCreated,
 		LastPublishedAt:  story.LastCreated,
 		ArticleCount:     story.BeanCount,
