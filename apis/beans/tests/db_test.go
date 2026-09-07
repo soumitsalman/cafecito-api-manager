@@ -484,6 +484,7 @@ func TestQueryClusters(t *testing.T) {
 	require.NotEmpty(t, page.Items)
 	for _, story := range page.Items {
 		assert.NotEmpty(t, story.ID)
+		assert.NotEmpty(t, story.Title)
 		assert.GreaterOrEqual(t, story.BeanCount, 2)
 		assert.GreaterOrEqual(t, story.SourceCount, 1)
 		assert.NotEmpty(t, story.TopArticles)
@@ -492,6 +493,14 @@ func TestQueryClusters(t *testing.T) {
 		assert.NotNil(t, story.Regions)
 		assert.NotNil(t, story.Entities)
 		assert.NotNil(t, story.Tags)
+
+		source_ids := make(map[uuid.UUID]struct{}, len(story.TopArticles))
+		for _, article := range story.TopArticles {
+			source_ids[article.SourceID] = struct{}{}
+		}
+		if story.SourceCount >= 3 {
+			assert.Equal(t, len(story.TopArticles), len(source_ids))
+		}
 	}
 	pp.Println("STORIES", page.Items)
 }

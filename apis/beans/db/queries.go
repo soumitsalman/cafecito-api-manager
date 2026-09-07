@@ -719,6 +719,8 @@ func (b *PGSack) queryClustersByKNNSearch(ctx context.Context, filters *ClusterF
 	return utils.FetchAll[clusterBase](ctx, b.db, query, params)
 }
 
+// hydrateStories loads cluster stats, a longest-title representative, and up to 3
+// recent member articles (one per source when possible) from latest_beans_view.
 func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster, error) {
 	if len(ids) == 0 {
 		return []Cluster{}, nil
@@ -782,9 +784,21 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 		tag_agg AS (
 			SELECT cluster_id, ARRAY_AGG(val ORDER BY cnt DESC, val ASC) AS tags
 			FROM tag_ranked WHERE rn <= 10 GROUP BY cluster_id
+		),
+		repr AS (
+			SELECT DISTINCT ON (cluster_id)
+				cluster_id,
+				title,
+				summary
+			FROM latest_beans_view
+			WHERE cluster_id = ANY(@ids)
+				AND COALESCE(title, '') <> ''
+			ORDER BY cluster_id, LENGTH(title) DESC, created DESC, id DESC
 		)
 		SELECT
 			s.id,
+			COALESCE(rp.title, '') AS title,
+			COALESCE(rp.summary, '') AS summary,
 			s.first_created,
 			s.last_created,
 			s.bean_count,
@@ -794,6 +808,7 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 			COALESCE(e.entities, '{}') AS entities,
 			COALESCE(t.tags, '{}') AS tags
 		FROM stats s
+		LEFT JOIN repr rp ON rp.cluster_id = s.id
 		LEFT JOIN cat_agg c ON c.cluster_id = s.id
 		LEFT JOIN region_agg r ON r.cluster_id = s.id
 		LEFT JOIN entity_agg e ON e.cluster_id = s.id
@@ -804,12 +819,12 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 		return nil, err
 	}
 	by_id := make(map[uuid.UUID]Cluster, len(stats))
-	for _, story := range stats {
-		story.Categories = coalesceStrings(story.Categories)
-		story.Regions = coalesceStrings(story.Regions)
-		story.Entities = coalesceStrings(story.Entities)
-		story.Tags = coalesceStrings(story.Tags)
-		by_id[story.ID] = story
+	for _, cluster := range stats {
+		cluster.Categories = coalesceStrings(cluster.Categories)
+		cluster.Regions = coalesceStrings(cluster.Regions)
+		cluster.Entities = coalesceStrings(cluster.Entities)
+		cluster.Tags = coalesceStrings(cluster.Tags)
+		by_id[cluster.ID] = cluster
 	}
 
 	top_query := fmt.Sprintf(`
@@ -818,45 +833,47 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 			SELECT %s,
 				ROW_NUMBER() OVER (
 					PARTITION BY cluster_id
-					ORDER BY trend_score DESC, created DESC, id DESC
+					ORDER BY source_rn ASC, created DESC, id DESC
 				) AS rn
-			FROM trending_beans_view
-			WHERE cluster_id = ANY(@ids)
+			FROM (
+				SELECT %s,
+					ROW_NUMBER() OVER (
+						PARTITION BY cluster_id, source_id
+						ORDER BY created DESC, id DESC
+					) AS source_rn
+				FROM latest_beans_view
+				WHERE cluster_id = ANY(@ids)
+			) per_source
 		) ranked
 		WHERE rn <= 3
 		ORDER BY cluster_id, rn`,
 		_CLUSTER_BEAN_COLUMNS_MINIMAL,
 		_CLUSTER_BEAN_COLUMNS_MINIMAL,
+		_CLUSTER_BEAN_COLUMNS_MINIMAL,
 	)
-	articles, err := utils.FetchAll[Bean](ctx, b.db, top_query, params)
+	beans, err := utils.FetchAll[Bean](ctx, b.db, top_query, params)
 	if err != nil {
 		return nil, err
 	}
 	grouped := make(map[uuid.UUID][]Bean, len(ids))
-	for _, article := range articles {
+	for _, article := range beans {
 		if article.ClusterID == uuid.Nil {
 			continue
 		}
 		grouped[article.ClusterID] = append(grouped[article.ClusterID], article)
 	}
 
-	stories := make([]Cluster, 0, len(ids))
+	clusters := make([]Cluster, 0, len(ids))
 	for _, id := range ids {
-		story, ok := by_id[id]
+		cluster, ok := by_id[id]
 		if !ok {
 			continue
 		}
-		story.TopArticles = grouped[id]
-		if story.TopArticles == nil {
-			story.TopArticles = []Bean{}
+		cluster.TopArticles = grouped[id]
+		if cluster.TopArticles == nil {
+			cluster.TopArticles = []Bean{}
 		}
-		for _, article := range story.TopArticles {
-			if article.Title.Valid && article.Title.String != "" {
-				story.Title = article.Title.String
-				break
-			}
-		}
-		stories = append(stories, story)
+		clusters = append(clusters, cluster)
 	}
-	return stories, nil
+	return clusters, nil
 }

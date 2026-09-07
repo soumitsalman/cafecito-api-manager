@@ -90,7 +90,7 @@ const (
 )
 
 const (
-	_CLUSTER_BEAN_COLUMNS_MINIMAL = "id, url, created, title, summary, source_id, base_url, domain_name, site_name, cluster_id"
+	_CLUSTER_BEAN_COLUMNS_MINIMAL = "id, url, created, title, source_id, base_url, domain_name, site_name, cluster_id"
 )
 
 const (
