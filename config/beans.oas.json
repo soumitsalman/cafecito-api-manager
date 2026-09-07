@@ -1750,6 +1750,342 @@
         "operationId": "getTopHeadlines"
       }
     },
+    "/beans/news/latest": {
+      "get": {
+        "summary": "List latest news",
+        "description": "Returns news Articles ordered newest first. News-scoped shortcut equivalent to GET /beans/articles/latest?content_type=news. Does not accept content_type, ids, urls, from, or to. Unknown or inapplicable query parameters return HTTP 400.",
+        "tags": [
+          "Articles"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/q"
+          },
+          {
+            "$ref": "#/components/parameters/score_threshold"
+          },
+          {
+            "$ref": "#/components/parameters/sources"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_sources"
+          },
+          {
+            "$ref": "#/components/parameters/domains"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_domains"
+          },
+          {
+            "$ref": "#/components/parameters/authors"
+          },
+          {
+            "$ref": "#/components/parameters/categories"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_categories"
+          },
+          {
+            "$ref": "#/components/parameters/regions"
+          },
+          {
+            "$ref": "#/components/parameters/entities"
+          },
+          {
+            "$ref": "#/components/parameters/sentiments"
+          },
+          {
+            "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/full_content"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCollectionResponse"
+                },
+                "examples": {
+                  "live": {
+                    "summary": "Live response sample",
+                    "value": {
+                      "pagination": {
+                        "limit": 1,
+                        "num_results": 1,
+                        "next_cursor": "eyJ2IjoxLCJzIjoiY3JlYXRlZCIsImlkIjoiM2E0NzllM2MtYTg3ZC01OTFlLWJiNmMtNWM4M2MwM2I2YTQwIiwiYyI6IjIwMjYtMDgtMjRUMDI6MDA6NDNaIn0"
+                      },
+                      "meta": {
+                        "as_of": "2026-08-24T20:42:39.633280927Z"
+                      },
+                      "data": [
+                        {
+                          "id": "3a479e3c-a87d-591e-bb6c-5c83c03b6a40",
+                          "url": "https://www.middleeastainews.com/p/uae-ai-programme-adds-agentic-ai",
+                          "content_type": "news",
+                          "published_at": "2026-08-24T02:00:43Z",
+                          "author": "Carrington Malin",
+                          "image_url": null,
+                          "title": "UAE AI Programme adds Agentic AI focus",
+                          "summary": "Listen now | Middle East AI News Minute - 24-Aug-26",
+                          "categories": [
+                            "artificial_intelligence_and_machine_learning",
+                            "generative_ai_and_foundation_models"
+                          ],
+                          "regions": null,
+                          "entities": [
+                            "carrington_malin"
+                          ],
+                          "sentiments": [
+                            "disturbed",
+                            "anxious"
+                          ],
+                          "tags": [
+                            "artificial_intelligence_and_machine_learning",
+                            "generative_ai_and_foundation_models",
+                            "carrington_malin"
+                          ],
+                          "story_id": "06860aaa-a43c-585f-9cb3-a6710a93a74a",
+                          "source": null
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "description": "Service unavailable; retry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "${env.BEANS_BASE_URL}/news/latest"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "zuplo-api-key-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        },
+        "operationId": "getLatestNews"
+      }
+    },
+    "/beans/news/trending": {
+      "get": {
+        "summary": "List trending news",
+        "description": "Returns attention-ranked news Articles with trend metrics when available. News-scoped shortcut equivalent to GET /beans/articles/trending?content_type=news. Does not accept content_type, ids, urls, from, or to. Unknown or inapplicable query parameters return HTTP 400.",
+        "tags": [
+          "Articles"
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/q"
+          },
+          {
+            "$ref": "#/components/parameters/score_threshold"
+          },
+          {
+            "$ref": "#/components/parameters/sources"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_sources"
+          },
+          {
+            "$ref": "#/components/parameters/domains"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_domains"
+          },
+          {
+            "$ref": "#/components/parameters/authors"
+          },
+          {
+            "$ref": "#/components/parameters/categories"
+          },
+          {
+            "$ref": "#/components/parameters/exclude_categories"
+          },
+          {
+            "$ref": "#/components/parameters/regions"
+          },
+          {
+            "$ref": "#/components/parameters/entities"
+          },
+          {
+            "$ref": "#/components/parameters/sentiments"
+          },
+          {
+            "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/full_content"
+          },
+          {
+            "$ref": "#/components/parameters/limit"
+          },
+          {
+            "$ref": "#/components/parameters/cursor"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleCollectionResponse"
+                },
+                "examples": {
+                  "live": {
+                    "summary": "Live response sample",
+                    "value": {
+                      "pagination": {
+                        "limit": 1,
+                        "num_results": 1,
+                        "next_cursor": "eyJ2IjoxLCJzIjoidHJlbmRfc2NvcmUiLCJpZCI6IjVjZjk3NDAwLTY1ZTAtNTllZi1hZWMxLWFiNGU3YjA3ZTljMCIsInRzIjowfQ"
+                      },
+                      "meta": {
+                        "as_of": "2026-08-24T20:42:40.160758718Z"
+                      },
+                      "data": [
+                        {
+                          "id": "5cf97400-65e0-59ef-aec1-ab4e7b07e9c0",
+                          "url": "https://www.theguardian.com/us-news/2026/aug/23/hakeem-jeffries-jared-kushner-meeting",
+                          "content_type": "news",
+                          "published_at": "2026-08-23T17:55:52Z",
+                          "author": null,
+                          "image_url": "https://i.guim.co.uk/img/media/9c27978883c3099f3b215f8e74787e2ead13ad64/0_0_5000_4000/master/5000.jpg?width=1200&height=630&quality=85&auto=format&fit=crop&precrop=40:21,offset-x50,offset-y0&overlay-align=bottom%2cleft&overlay-width=100p&overlay-base64=l2ltzy9zdgf0awmvb3zlcmxhexmvdgctzgvmyxvsdc5wbmc&enable=upscale&s=fa0ea6e83cfaf04224f9cf17d1d4ca89",
+                          "title": "Democrats incredulous over Hakeem Jeffries and Jared Kushner meeting",
+                          "summary": null,
+                          "categories": [
+                            "internet_culture_and_social_media",
+                            "elections_and_voting"
+                          ],
+                          "regions": [
+                            "maryland",
+                            "illinois",
+                            "iran"
+                          ],
+                          "entities": null,
+                          "sentiments": [
+                            "contemplative",
+                            "observant"
+                          ],
+                          "tags": [
+                            "internet_culture_and_social_media",
+                            "elections_and_voting",
+                            "maryland",
+                            "illinois",
+                            "iran"
+                          ],
+                          "story_id": "3e44a72a-be72-5465-82b6-c5ffd43d474e",
+                          "source": null,
+                          "trend": {
+                            "likes": 542,
+                            "comments": 56805,
+                            "mentions": 2,
+                            "audiences": 0,
+                            "related": 0,
+                            "trend_score": 1420406
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid path or query parameter.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "description": "Service unavailable; retry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "x-zuplo-route": {
+          "corsPolicy": "none",
+          "handler": {
+            "export": "urlRewriteHandler",
+            "module": "$import(@zuplo/runtime)",
+            "options": {
+              "rewritePattern": "${env.BEANS_BASE_URL}/news/trending"
+            }
+          },
+          "policies": {
+            "inbound": [
+              "zuplo-api-key-inbound",
+              "freeuser-rate-limit-inbound",
+              "freeuser-quota-inbound",
+              "backend-api-key-inbound"
+            ]
+          }
+        },
+        "operationId": "getTrendingNews"
+      }
+    },
     "/beans/articles/latest": {
       "get": {
         "summary": "List latest Articles",

@@ -17,8 +17,8 @@ Do not document or rely on private backend headers in public copy.
 
 - Collection envelope: `data`, `pagination.limit`, `pagination.num_results`, `pagination.next_cursor`, `meta.as_of`.
 - Errors: `{ "error": { "code", "message" } }`. Empty collections are HTTP 200. Missing detail is 404.
-- `GET /news/top-headlines` maps to public `GET /beans/news/top-headlines`. Do not send `content_type`, `ids`, `urls`, `from`, or `to`.
-- Feed routes (`/articles/latest`, `/articles/trending`) reject `ids`, `urls`, `from`, and `to`.
+- `GET /news/top-headlines`, `GET /news/latest`, and `GET /news/trending` map to the matching public `/beans/news/...` paths. Do not send `content_type`, `ids`, `urls`, `from`, or `to`.
+- Feed routes (`/articles/latest`, `/articles/trending`) reject `ids`, `urls`, `from`, and `to`. `/news/latest` and `/news/trending` are news-scoped shortcuts for those article feeds.
 - Request `content_type=post` is invalid. `post` may appear on Article responses.
 - `full_content=true` requests body text when available; it is not a full-text guarantee.
 

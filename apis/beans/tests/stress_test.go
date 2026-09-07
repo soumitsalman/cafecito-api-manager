@@ -35,6 +35,8 @@ var stress_endpoints = []stressEndpoint{
 	{path: ROUTE_LATEST, accepts_q: true, accepts_tags: true},
 	{path: ROUTE_TRENDING, accepts_q: true, accepts_tags: true},
 	{path: ROUTE_HEADLINES, accepts_q: true, accepts_tags: true},
+	{path: ROUTE_NEWS_LATEST, accepts_q: true, accepts_tags: true},
+	{path: ROUTE_NEWS_TRENDING, accepts_q: true, accepts_tags: true},
 	{path: ROUTE_SOURCES, accepts_q: true},
 	{path: ROUTE_CATEGORIES, accepts_q: true},
 	{path: ROUTE_ENTITIES, accepts_q: true},

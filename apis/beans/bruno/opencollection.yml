@@ -20,7 +20,7 @@ request:
     token: "{{apiKey}}"
 
 docs:
-  content: Beans returns citable publisher Articles, Source metadata, attention-ranked feeds, Stories, similar reading, mentions, and filter discovery. Public gateway paths add the /beans prefix. GET /news/top-headlines is the backend path for public GET /beans/news/top-headlines. Do not send content_type, ids, urls, from, or to on that route. content_type=post is not a request filter.
+  content: Beans returns citable publisher Articles, Source metadata, attention-ranked feeds, Stories, similar reading, mentions, and filter discovery. Public gateway paths add the /beans prefix. GET /news/top-headlines, /news/latest, and /news/trending are backend paths for the matching public /beans/news/... routes. Do not send content_type, ids, urls, from, or to on those routes. content_type=post is not a request filter.
   type: text/markdown
 bundled: false
 extensions:

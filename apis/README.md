@@ -62,7 +62,7 @@ Shared collection envelope (both products): `{ data, pagination, meta }` with `p
 
 Product-specific notes:
 
-- **Beans:** `meta.as_of` is required on collections. Feed routes (`/articles/latest`, `/articles/trending`, `/news/top-headlines`) reject `ids`, `urls`, `from`, and `to`. `/news/top-headlines` additionally rejects `content_type` and is fixed to news in a 24-hour window. Keep `GET /news/top-headlines` on the backend. `content_type=post` as a request filter returns 400; `post` may still appear on Article responses. Unknown or route-inapplicable query parameters return 400.
+- **Beans:** `meta.as_of` is required on collections. Feed routes (`/articles/latest`, `/articles/trending`, `/news/latest`, `/news/trending`, `/news/top-headlines`) reject `ids`, `urls`, `from`, and `to`. `/news/latest`, `/news/trending`, and `/news/top-headlines` additionally reject `content_type` and are fixed to news. `/news/top-headlines` uses a 24-hour window. Keep the `/news/...` feed routes on the backend. `content_type=post` as a request filter returns 400; `post` may still appear on Article responses. Unknown or route-inapplicable query parameters return 400.
 - **Espresso:** Formats via `response_type`: `json` (default), `yaml`, `toon` (same logical payload). Event/Signal stable core: `id`, `kind`, `created_at`, `tags`. Conditional: `summary`, `source`, `links`, `counts`. Ignore unknown extension fields. There is no public Actions route.
 
 ## Layout

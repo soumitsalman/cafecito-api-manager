@@ -22,20 +22,22 @@ import (
 )
 
 const (
-	ROUTE_HEALTH     = "/health"
-	ROUTE_DOCS       = "/docs/index.html"
-	ROUTE_SEARCH     = "/articles/search"
-	ROUTE_LATEST     = "/articles/latest"
-	ROUTE_TRENDING   = "/articles/trending"
-	ROUTE_HEADLINES  = "/news/top-headlines"
-	ROUTE_ARTICLES   = "/articles"
-	ROUTE_SOURCES    = "/sources"
-	ROUTE_CATEGORIES = "/categories"
-	ROUTE_ENTITIES   = "/entities"
-	ROUTE_REGIONS    = "/regions"
-	ROUTE_SENTIMENTS = "/sentiments"
-	ROUTE_TAGS       = "/tags"
-	ROUTE_STORIES    = "/stories"
+	ROUTE_HEALTH        = "/health"
+	ROUTE_DOCS          = "/docs/index.html"
+	ROUTE_SEARCH        = "/articles/search"
+	ROUTE_LATEST        = "/articles/latest"
+	ROUTE_TRENDING      = "/articles/trending"
+	ROUTE_HEADLINES     = "/news/top-headlines"
+	ROUTE_NEWS_LATEST   = "/news/latest"
+	ROUTE_NEWS_TRENDING = "/news/trending"
+	ROUTE_ARTICLES      = "/articles"
+	ROUTE_SOURCES       = "/sources"
+	ROUTE_CATEGORIES    = "/categories"
+	ROUTE_ENTITIES      = "/entities"
+	ROUTE_REGIONS       = "/regions"
+	ROUTE_SENTIMENTS    = "/sentiments"
+	ROUTE_TAGS          = "/tags"
+	ROUTE_STORIES       = "/stories"
 )
 
 func newTestHTTPServer(t *testing.T) *httptest.Server {
@@ -670,7 +672,7 @@ func TestRouterVectorSearchArticles(t *testing.T) {
 
 func TestRouterScoreThresholdRequiresQ(t *testing.T) {
 	srv := newTestHTTPServer(t)
-	for _, path := range []string{ROUTE_SEARCH, ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_TRENDING, ROUTE_STORIES} {
+	for _, path := range []string{ROUTE_SEARCH, ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_NEWS_LATEST, ROUTE_NEWS_TRENDING, ROUTE_TRENDING, ROUTE_STORIES} {
 		t.Run(path, func(t *testing.T) {
 			params := url.Values{}
 			params.Set("score_threshold", "0.6")
@@ -685,7 +687,7 @@ func TestRouterScoreThresholdRequiresQ(t *testing.T) {
 
 func TestRouterQueryMayOmitScoreThreshold(t *testing.T) {
 	srv := newTestHTTPServer(t)
-	for _, path := range []string{ROUTE_SEARCH, ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_TRENDING, ROUTE_STORIES} {
+	for _, path := range []string{ROUTE_SEARCH, ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_NEWS_LATEST, ROUTE_NEWS_TRENDING, ROUTE_TRENDING, ROUTE_STORIES} {
 		t.Run(path, func(t *testing.T) {
 			params := url.Values{}
 			params.Set("q", TEST_VECTOR_QUERY)
@@ -758,6 +760,38 @@ func TestRouterGetTrendingArticles(t *testing.T) {
 	}
 }
 
+func TestRouterGetLatestNews(t *testing.T) {
+	srv := newTestHTTPServer(t)
+	params := url.Values{}
+	addArticleFilters(params)
+	status, body := routerGET(t, srv.URL, ROUTE_NEWS_LATEST, params)
+	printResponse(t, "NEWS_LATEST", body)
+	requireStatus(t, http.StatusOK, status, body)
+	assertMetaAsOf(t, body)
+	items := assertExpectedPagination(t, body, 5)
+	require.NotEmpty(t, items)
+	for _, item := range items {
+		assert.Equal(t, "news", item["content_type"])
+		assert.NotContains(t, item, "trend")
+	}
+}
+
+func TestRouterGetTrendingNews(t *testing.T) {
+	srv := newTestHTTPServer(t)
+	params := url.Values{}
+	addArticleFilters(params)
+	status, body := routerGET(t, srv.URL, ROUTE_NEWS_TRENDING, params)
+	printResponse(t, "NEWS_TRENDING", body)
+	requireStatus(t, http.StatusOK, status, body)
+	assertMetaAsOf(t, body)
+	items := assertExpectedPagination(t, body, 5)
+	require.NotEmpty(t, items)
+	for _, item := range items {
+		assert.Equal(t, "news", item["content_type"])
+		assertExpectedTrend(t, item)
+	}
+}
+
 func TestRouterGetHeadlines(t *testing.T) {
 	srv := newTestHTTPServer(t)
 	params := url.Values{}
@@ -777,7 +811,7 @@ func TestRouterGetHeadlines(t *testing.T) {
 func TestRouterLatestAndTrendingRejectExactIdentityFilters(t *testing.T) {
 	srv := newTestHTTPServer(t)
 	article_id := firstArticleID(t, srv.URL)
-	for _, path := range []string{ROUTE_LATEST, ROUTE_TRENDING, ROUTE_HEADLINES} {
+	for _, path := range []string{ROUTE_LATEST, ROUTE_TRENDING, ROUTE_HEADLINES, ROUTE_NEWS_LATEST, ROUTE_NEWS_TRENDING} {
 		t.Run(path, func(t *testing.T) {
 			params := url.Values{}
 			params.Set("ids", article_id)
@@ -793,7 +827,7 @@ func TestRouterLatestAndTrendingRejectExactIdentityFilters(t *testing.T) {
 
 func TestRouterFeedsRejectDisallowedDateBounds(t *testing.T) {
 	srv := newTestHTTPServer(t)
-	for _, path := range []string{ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_TRENDING} {
+	for _, path := range []string{ROUTE_LATEST, ROUTE_HEADLINES, ROUTE_TRENDING, ROUTE_NEWS_LATEST, ROUTE_NEWS_TRENDING} {
 		t.Run(path, func(t *testing.T) {
 			params := url.Values{}
 			params.Set("from", testSearchFrom().Format("2006-01-02"))
@@ -807,15 +841,19 @@ func TestRouterFeedsRejectDisallowedDateBounds(t *testing.T) {
 	}
 }
 
-func TestRouterTopHeadlinesRejectsContentType(t *testing.T) {
+func TestRouterNewsFeedsRejectContentType(t *testing.T) {
 	srv := newTestHTTPServer(t)
-	params := url.Values{}
-	params.Set("content_type", "news")
-	params.Set("limit", "5")
-	status, body := routerGET(t, srv.URL, ROUTE_HEADLINES, params)
-	printResponse(t, "HEADLINES_CONTENT_TYPE", body)
-	requireStatus(t, http.StatusBadRequest, status, body)
-	assertExpectedAPIError(t, body, shared.API_ERROR_INVALID_REQUEST)
+	for _, path := range []string{ROUTE_HEADLINES, ROUTE_NEWS_LATEST, ROUTE_NEWS_TRENDING} {
+		t.Run(path, func(t *testing.T) {
+			params := url.Values{}
+			params.Set("content_type", "news")
+			params.Set("limit", "5")
+			status, body := routerGET(t, srv.URL, path, params)
+			printResponse(t, path+"_CONTENT_TYPE", body)
+			requireStatus(t, http.StatusBadRequest, status, body)
+			assertExpectedAPIError(t, body, shared.API_ERROR_INVALID_REQUEST)
+		})
+	}
 }
 
 func TestRouterSearchRejectsUnsupportedParameters(t *testing.T) {

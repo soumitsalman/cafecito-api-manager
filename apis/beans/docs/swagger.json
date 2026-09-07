@@ -67,7 +67,7 @@
                             "whitepaper"
                         ],
                         "type": "string",
-                        "description": "Filterable Article type. post is response-only and returns 400.",
+                        "description": "Filterable Article type.",
                         "name": "content_type",
                         "in": "query"
                     },
@@ -519,7 +519,7 @@
                             "whitepaper"
                         ],
                         "type": "string",
-                        "description": "Filterable Article type. post is response-only and returns 400.",
+                        "description": "Filterable Article type.",
                         "name": "content_type",
                         "in": "query"
                     },
@@ -1209,6 +1209,193 @@
                 }
             }
         },
+        "/news/latest": {
+            "get": {
+                "security": [
+                    {
+                        "BackendAPIKey": []
+                    }
+                ],
+                "description": "Returns news Articles ordered newest first. Equivalent to /articles/latest?content_type=news. content_type and date bounds are not accepted.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "List latest news",
+                "operationId": "getLatestNews",
+                "parameters": [
+                    {
+                        "maxLength": 512,
+                        "type": "string",
+                        "description": "Optional relevance query. Requires score_threshold greater than zero.",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "number",
+                        "description": "Required when q is supplied.",
+                        "name": "score_threshold",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source UUIDs to include (CSV).",
+                        "name": "sources",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source UUIDs to exclude (CSV).",
+                        "name": "exclude_sources",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source domains to include (CSV).",
+                        "name": "domains",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source domains to exclude (CSV).",
+                        "name": "exclude_domains",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Author text filters (CSV).",
+                        "name": "authors",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Category values (CSV).",
+                        "name": "categories",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Excluded category values (CSV).",
+                        "name": "exclude_categories",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Region values (CSV).",
+                        "name": "regions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Entity values (CSV).",
+                        "name": "entities",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Sentiment values (CSV).",
+                        "name": "sentiments",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Normalized tag terms (CSV).",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Include content when available.",
+                        "name": "full_content",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Maximum records per page. Default 20, max 100.",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Opaque continuation token from pagination.next_cursor. Send it unchanged.",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/router.ArticleCollectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "schema": {
+                            "$ref": "#/definitions/router.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/router.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/news/top-headlines": {
             "get": {
                 "security": [
@@ -1225,6 +1412,193 @@
                 ],
                 "summary": "List top headlines",
                 "operationId": "getTopHeadlines",
+                "parameters": [
+                    {
+                        "maxLength": 512,
+                        "type": "string",
+                        "description": "Optional relevance query. Requires score_threshold greater than zero.",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "number",
+                        "description": "Required when q is supplied.",
+                        "name": "score_threshold",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source UUIDs to include (CSV).",
+                        "name": "sources",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source UUIDs to exclude (CSV).",
+                        "name": "exclude_sources",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source domains to include (CSV).",
+                        "name": "domains",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Source domains to exclude (CSV).",
+                        "name": "exclude_domains",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Author text filters (CSV).",
+                        "name": "authors",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Category values (CSV).",
+                        "name": "categories",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Excluded category values (CSV).",
+                        "name": "exclude_categories",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Region values (CSV).",
+                        "name": "regions",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Entity values (CSV).",
+                        "name": "entities",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Sentiment values (CSV).",
+                        "name": "sentiments",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "Normalized tag terms (CSV).",
+                        "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "default": false,
+                        "description": "Include content when available.",
+                        "name": "full_content",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Maximum records per page. Default 20, max 100.",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Opaque continuation token from pagination.next_cursor. Send it unchanged.",
+                        "name": "cursor",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/router.ArticleCollectionResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid parameters",
+                        "schema": {
+                            "$ref": "#/definitions/router.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Service unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/router.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/news/trending": {
+            "get": {
+                "security": [
+                    {
+                        "BackendAPIKey": []
+                    }
+                ],
+                "description": "Returns attention-ranked news Articles with trend metrics when available. Equivalent to /articles/trending?content_type=news. content_type and date bounds are not accepted.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "List trending news",
+                "operationId": "getTrendingNews",
                 "parameters": [
                     {
                         "maxLength": 512,
@@ -2196,7 +2570,6 @@
                     "type": "string"
                 },
                 "content_type": {
-                    "description": "Kind is the stored Article type. post may appear in responses but is not a valid request filter.",
                     "type": "string",
                     "enum": [
                         "blog",
@@ -2227,6 +2600,9 @@
                     "format": "uuid"
                 },
                 "image_url": {
+                    "type": "string"
+                },
+                "language": {
                     "type": "string"
                 },
                 "links": {
@@ -2302,7 +2678,6 @@
                     "type": "string"
                 },
                 "content_type": {
-                    "description": "Kind is the stored Article type. post may appear in responses but is not a valid request filter.",
                     "type": "string",
                     "enum": [
                         "blog",
@@ -2333,6 +2708,9 @@
                     "format": "uuid"
                 },
                 "image_url": {
+                    "type": "string"
+                },
+                "language": {
                     "type": "string"
                 },
                 "published_at": {
@@ -2696,6 +3074,9 @@
                 "source_count": {
                     "type": "integer"
                 },
+                "summary": {
+                    "type": "string"
+                },
                 "tags": {
                     "type": "array",
                     "items": {
@@ -2761,6 +3142,9 @@
                 },
                 "source_count": {
                     "type": "integer"
+                },
+                "summary": {
+                    "type": "string"
                 },
                 "tags": {
                     "type": "array",

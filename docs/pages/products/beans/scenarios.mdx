@@ -24,7 +24,7 @@ export BASE_URL="https://api.cafecito.tech"
 | Request `full_content=true` only for selected Article detail. | Collections remain compact. Body content is available only when Beans has it; use `url` for attribution. |
 | Treat `pagination.next_cursor` as opaque. | Send it back only as `cursor` with the same route and filters. |
 | Use discovery only for an unknown value. | Known normalized categories, entities, regions, and sentiments can go directly into Article filters. |
-| Send only documented parameters. | Unknown or route-inapplicable keys, including `content_type` on top-headlines and `from`/`to` on feeds, return HTTP `400`. |
+| Send only documented parameters. | Unknown or route-inapplicable keys, including `content_type` on top-headlines and the news feed shortcuts, and `from`/`to` on feeds, return HTTP `400`. |
 
 Request `content_type` accepts 14 filterable types: `blog`, `contract`, `earnings_report`, `enforcement_action`, `financial_report`, `lawsuit`, `news`, `official_statement`, `podcast`, `press_release`, `research_paper`, `site`, `technical_documentation`, and `whitepaper`. `post` may appear on responses. `content_type=post` returns HTTP `400`. Omit `content_type` when a collection should include all stored types.
 

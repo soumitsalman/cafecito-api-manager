@@ -406,8 +406,8 @@ func (r *Configuration) getTrendingArticles(c *gin.Context) {
 
 // getLatestNews godoc
 // @Summary List latest news
-// @Description Returns News ordered newest first. This is an alias for /articles/latest.
-// @Tags News
+// @Description Returns news Articles ordered newest first. Equivalent to /articles/latest?content_type=news. content_type and date bounds are not accepted.
+// @Tags Articles
 // @Security BackendAPIKey
 // @Produce json
 // @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
@@ -432,7 +432,7 @@ func (r *Configuration) getTrendingArticles(c *gin.Context) {
 // @ID getLatestNews
 // @Router /news/latest [get]
 func (r *Configuration) getLatestNews(c *gin.Context) {
-	var params articleFeedParams
+	var params topHeadlinesParams
 	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
@@ -451,8 +451,8 @@ func (r *Configuration) getLatestNews(c *gin.Context) {
 
 // getTrendingNews godoc
 // @Summary List trending news
-// @Description Returns attention-ranked News with trend metrics when available. This an alias for /articles/trending?content_type=news.
-// @Tags News
+// @Description Returns attention-ranked news Articles with trend metrics when available. Equivalent to /articles/trending?content_type=news. content_type and date bounds are not accepted.
+// @Tags Articles
 // @Security BackendAPIKey
 // @Produce json
 // @Param q query string false "Optional relevance query. Requires score_threshold greater than zero." maxlength(512)
@@ -477,7 +477,7 @@ func (r *Configuration) getLatestNews(c *gin.Context) {
 // @ID getTrendingNews
 // @Router /news/trending [get]
 func (r *Configuration) getTrendingNews(c *gin.Context) {
-	var params articleFeedParams
+	var params topHeadlinesParams
 	filters, page_req, err := extractBeanFiltersAndPage(r, c, &params)
 	if err != nil {
 		writeError(c, err)
