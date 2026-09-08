@@ -714,6 +714,15 @@ paths:
           type: string
         name: tags
         type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
+        type: array
       - description: UTC lower timestamp bound.
         format: date
         in: query
@@ -877,6 +886,15 @@ paths:
         items:
           type: string
         name: tags
+        type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
         type: array
       - default: false
         description: Include content when available.
@@ -1042,6 +1060,15 @@ paths:
           type: string
         name: tags
         type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
+        type: array
       - description: UTC lower timestamp bound.
         format: date
         in: query
@@ -1202,6 +1229,15 @@ paths:
         items:
           type: string
         name: tags
+        type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
         type: array
       - default: false
         description: Include content when available.
@@ -1433,6 +1469,15 @@ paths:
           type: string
         name: tags
         type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
+        type: array
       - default: false
         description: Include content when available.
         in: query
@@ -1564,6 +1609,15 @@ paths:
         items:
           type: string
         name: tags
+        type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
         type: array
       - default: false
         description: Include content when available.
@@ -1697,6 +1751,15 @@ paths:
         items:
           type: string
         name: tags
+        type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
         type: array
       - default: false
         description: Include content when available.
@@ -2024,6 +2087,15 @@ paths:
           type: string
         name: tags
         type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
+        type: array
       - default: 2
         description: Minimum Story Article count. Default 2.
         in: query
@@ -2215,6 +2287,15 @@ paths:
         items:
           type: string
         name: tags
+        type: array
+      - collectionFormat: csv
+        description: ISO 639 language codes to include (CSV). Any listed value matches.
+          A stored language matches if it equals a listed code or starts with that
+          code.
+        in: query
+        items:
+          type: string
+        name: languages
         type: array
       - description: UTC lower publication timestamp.
         format: date

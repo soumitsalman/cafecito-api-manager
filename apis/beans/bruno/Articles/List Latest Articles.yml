@@ -18,6 +18,10 @@ http:
     - name: full_content
       value: "true"
       type: query
+    - name: languages
+      value: en,es
+      type: query
+      disabled: true
   auth: inherit
 
 settings:

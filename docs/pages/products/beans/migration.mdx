@@ -80,6 +80,7 @@ Collection items are intended to help an agent select relevant Article IDs; deta
 | Public content type | `content_type` | One of the 14 filterable types. `post` is response-only. |
 | Publisher or domain narrowing | `sources`, `domains`, `exclude_sources`, or `exclude_domains` | Use Source UUIDs or domain values as documented by the route. |
 | Article labels | `authors`, `categories`, `exclude_categories`, `entities`, `regions`, `sentiments`, or `tags` | Include values within one field use OR; different fields combine with AND. |
+| Language | `languages` | CSV ISO 639 language codes; any listed value matches. A stored language matches if it equals a listed code or starts with that code. |
 | Publication bounds | `from` and `to` | Inclusive `YYYY-MM-DD` bounds on search, similar, Stories, Story Articles, and mention `observed_at`. Not accepted on latest, trending, top-headlines, or the news feed shortcuts. |
 | Larger Article projection | `full_content=true` | Requests body content when Beans has it. Handle missing `content` and cite `url`. |
 

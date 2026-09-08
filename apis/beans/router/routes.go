@@ -97,7 +97,7 @@ func (p *articleScopeParams) createFilters(c *gin.Context, r *Configuration) (*d
 		Entities:          utils.NormalizeTags(p.Entities),
 		Regions:           utils.NormalizeTags(p.Regions),
 		FullContent:       p.FullContent,
-		Language:          utils.NormalizeText(p.Language),
+		Languages:         utils.NormalizeTexts(p.Languages),
 	}
 	return &filters, nil
 }
@@ -288,6 +288,7 @@ func (r *Configuration) health(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param from query string false "UTC lower timestamp bound." format(date)
 // @Param to query string false "UTC upper timestamp bound." format(date)
 // @Param full_content query bool false "Include content when available." default(false)
@@ -335,6 +336,7 @@ func (r *Configuration) searchArticles(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param full_content query bool false "Include content when available." default(false)
 // @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
 // @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
@@ -380,6 +382,7 @@ func (r *Configuration) getLatestArticles(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param full_content query bool false "Include content when available." default(false)
 // @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
 // @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
@@ -423,6 +426,7 @@ func (r *Configuration) getTrendingArticles(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param full_content query bool false "Include content when available." default(false)
 // @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
 // @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
@@ -468,6 +472,7 @@ func (r *Configuration) getLatestNews(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param full_content query bool false "Include content when available." default(false)
 // @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
 // @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
@@ -517,6 +522,7 @@ func (r *Configuration) getTrendingNews(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param full_content query bool false "Include content when available." default(false)
 // @Param limit query int false "Maximum records per page. Default 20, max 100." default(20) minimum(1) maximum(100)
 // @Param cursor query string false "Opaque continuation token from pagination.next_cursor. Send it unchanged."
@@ -613,6 +619,7 @@ func (r *Configuration) getArticle(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param from query string false "UTC lower timestamp bound." format(date)
 // @Param to query string false "UTC upper timestamp bound." format(date)
 // @Param full_content query bool false "Include content when available." default(false)
@@ -880,6 +887,7 @@ func getTags(r *Configuration, c *gin.Context, db_tag_type string, response_tag_
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param min_article_count query int false "Minimum Story Article count. Default 2." default(2) minimum(2)
 // @Param from query string false "UTC lower publication timestamp." format(date)
 // @Param to query string false "UTC upper publication timestamp." format(date)
@@ -967,6 +975,7 @@ func (r *Configuration) getStory(c *gin.Context) {
 // @Param entities query []string false "Entity values (CSV)." collectionFormat(csv)
 // @Param sentiments query []string false "Sentiment values (CSV)." collectionFormat(csv)
 // @Param tags query []string false "Normalized tag terms (CSV)." collectionFormat(csv)
+// @Param languages query []string false "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code." collectionFormat(csv)
 // @Param from query string false "UTC lower publication timestamp." format(date)
 // @Param to query string false "UTC upper publication timestamp." format(date)
 // @Param full_content query bool false "Include content when available." default(false)

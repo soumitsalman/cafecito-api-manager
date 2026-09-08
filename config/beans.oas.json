@@ -285,6 +285,20 @@
         },
         "description": "Normalized tag terms. Every supplied term must match (CSV)."
       },
+      "languages": {
+        "name": "languages",
+        "in": "query",
+        "style": "form",
+        "explode": false,
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 100
+        },
+        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code."
+      },
       "from": {
         "name": "from",
         "in": "query",
@@ -598,6 +612,10 @@
           "content": {
             "type": "string",
             "description": "Present only when full_content=true and Beans has body content available. Not a universal full-text guarantee."
+          },
+          "language": {
+            "type": "string",
+            "description": "ISO 639 language code when available."
           },
           "categories": {
             "type": [
@@ -1632,6 +1650,9 @@
             "$ref": "#/components/parameters/tags"
           },
           {
+            "$ref": "#/components/parameters/languages"
+          },
+          {
             "$ref": "#/components/parameters/full_content"
           },
           {
@@ -1798,6 +1819,9 @@
             "$ref": "#/components/parameters/tags"
           },
           {
+            "$ref": "#/components/parameters/languages"
+          },
+          {
             "$ref": "#/components/parameters/full_content"
           },
           {
@@ -1958,6 +1982,9 @@
           },
           {
             "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/languages"
           },
           {
             "$ref": "#/components/parameters/full_content"
@@ -2137,6 +2164,9 @@
             "$ref": "#/components/parameters/tags"
           },
           {
+            "$ref": "#/components/parameters/languages"
+          },
+          {
             "$ref": "#/components/parameters/full_content"
           },
           {
@@ -2300,6 +2330,9 @@
           },
           {
             "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/languages"
           },
           {
             "$ref": "#/components/parameters/full_content"
@@ -2481,6 +2514,9 @@
           },
           {
             "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/languages"
           },
           {
             "$ref": "#/components/parameters/from"
@@ -3020,6 +3056,9 @@
             "$ref": "#/components/parameters/tags"
           },
           {
+            "$ref": "#/components/parameters/languages"
+          },
+          {
             "$ref": "#/components/parameters/from"
           },
           {
@@ -3463,6 +3502,9 @@
             "$ref": "#/components/parameters/tags"
           },
           {
+            "$ref": "#/components/parameters/languages"
+          },
+          {
             "$ref": "#/components/parameters/min_article_count"
           },
           {
@@ -3833,6 +3875,9 @@
           },
           {
             "$ref": "#/components/parameters/tags"
+          },
+          {
+            "$ref": "#/components/parameters/languages"
           },
           {
             "$ref": "#/components/parameters/from"

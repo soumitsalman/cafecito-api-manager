@@ -11,6 +11,10 @@ http:
     - name: tags
       value: politics
       type: query
+    - name: languages
+      value: en,es
+      type: query
+      disabled: true
   auth: inherit
 settings:
   encodeUrl: true

@@ -187,6 +187,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -416,6 +426,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date",
                         "description": "UTC lower timestamp bound.",
@@ -636,6 +656,16 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {
@@ -1005,6 +1035,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date",
                         "description": "UTC lower timestamp bound.",
@@ -1357,6 +1397,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -1544,6 +1594,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -1728,6 +1788,16 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {
@@ -2200,6 +2270,16 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "minimum": 2,
                         "type": "integer",
                         "default": 2,
@@ -2468,6 +2548,16 @@ const docTemplate = `{
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {

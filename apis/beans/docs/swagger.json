@@ -182,6 +182,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -411,6 +421,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date",
                         "description": "UTC lower timestamp bound.",
@@ -631,6 +651,16 @@
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {
@@ -1000,6 +1030,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "format": "date",
                         "description": "UTC lower timestamp bound.",
@@ -1352,6 +1392,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -1539,6 +1589,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "type": "boolean",
                         "default": false,
                         "description": "Include content when available.",
@@ -1723,6 +1783,16 @@
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {
@@ -2195,6 +2265,16 @@
                         "in": "query"
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
+                        "in": "query"
+                    },
+                    {
                         "minimum": 2,
                         "type": "integer",
                         "default": 2,
@@ -2463,6 +2543,16 @@
                         "collectionFormat": "csv",
                         "description": "Normalized tag terms (CSV).",
                         "name": "tags",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "ISO 639 language codes to include (CSV). Any listed value matches. A stored language matches if it equals a listed code or starts with that code.",
+                        "name": "languages",
                         "in": "query"
                     },
                     {

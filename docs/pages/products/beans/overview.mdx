@@ -269,6 +269,7 @@ The route matrix below names the response type for every public path. The follow
 | `published_at` | RFC 3339 timestamp | Publisher publication time. |
 | `title`, `summary`, `author`, `image_url` | string or `null` | Available publisher metadata. |
 | `content` | optional string | Included only when `full_content=true` is requested and Beans has body content. This is not a universal full-text guarantee. Handle a missing value and use `url` for attribution. |
+| `language` | string or omitted | ISO 639 language code when available. |
 | `categories`, `regions`, `entities`, `sentiments`, `tags` | string array or `null` | Available normalized labels. Use discovery routes when an accepted filter value is unknown. |
 | `story_id` | optional UUID string | Stable Story identifier when the Article belongs to a Story. |
 | `source` | Source object or `null` | Available publisher metadata for this Article. |
@@ -319,23 +320,23 @@ All request parameters are query parameters unless the table marks `id` as a pat
 
 | Route | Response type | Accepted request parameters |
 | --- | --- | --- |
-| `GET /beans/articles/search` | Article collection envelope | `q`, `score_threshold`, `ids`, `urls`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `from`, `to`, `full_content`, `limit`, `cursor` |
-| `GET /beans/articles/latest` | Article collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `full_content`, `limit`, `cursor` |
-| `GET /beans/news/latest` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `full_content`, `limit`, `cursor` |
-| `GET /beans/news/top-headlines` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `full_content`, `limit`, `cursor` |
-| `GET /beans/articles/trending` | Article collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `full_content`, `limit`, `cursor` |
-| `GET /beans/news/trending` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `full_content`, `limit`, `cursor` |
+| `GET /beans/articles/search` | Article collection envelope | `q`, `score_threshold`, `ids`, `urls`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `from`, `to`, `full_content`, `limit`, `cursor` |
+| `GET /beans/articles/latest` | Article collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `full_content`, `limit`, `cursor` |
+| `GET /beans/news/latest` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `full_content`, `limit`, `cursor` |
+| `GET /beans/news/top-headlines` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `full_content`, `limit`, `cursor` |
+| `GET /beans/articles/trending` | Article collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `full_content`, `limit`, `cursor` |
+| `GET /beans/news/trending` | Article collection envelope | `q`, `score_threshold`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `full_content`, `limit`, `cursor` |
 | `GET /beans/articles/{id}` | Article detail envelope | `id` path parameter, `full_content` |
-| `GET /beans/articles/{id}/similar` | Article collection envelope | `id` path parameter, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `from`, `to`, `full_content`, `limit`, `cursor` |
+| `GET /beans/articles/{id}/similar` | Article collection envelope | `id` path parameter, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `from`, `to`, `full_content`, `limit`, `cursor` |
 | `GET /beans/articles/{id}/mentions` | Mention collection envelope | `id` path parameter, `platforms`, `forums`, `from`, `to`, `limit`, `cursor` |
 
 ### Story routes
 
 | Route | Response type | Accepted request parameters |
 | --- | --- | --- |
-| `GET /beans/stories` | Story collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `min_article_count`, `from`, `to`, `limit`, `cursor` |
+| `GET /beans/stories` | Story collection envelope | `q`, `score_threshold`, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `min_article_count`, `from`, `to`, `limit`, `cursor` |
 | `GET /beans/stories/{id}` | Story detail envelope | `id` path parameter |
-| `GET /beans/stories/{id}/articles` | Story Article collection envelope | `id` path parameter, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `from`, `to`, `full_content`, `limit`, `cursor` |
+| `GET /beans/stories/{id}/articles` | Story Article collection envelope | `id` path parameter, `content_type`, `sources`, `exclude_sources`, `domains`, `exclude_domains`, `authors`, `categories`, `exclude_categories`, `regions`, `entities`, `sentiments`, `tags`, `languages`, `from`, `to`, `full_content`, `limit`, `cursor` |
 
 ## Query and filter rules
 
@@ -350,7 +351,7 @@ All request parameters are query parameters unless the table marks `id` as a pat
 | Text query | `q` is a route-specific natural-language relevance query and accepts up to 512 characters. |
 | Relevance threshold | `score_threshold` is in the `0.0` through `1.0` range. Use it only with `q`. A threshold without `q` returns HTTP `400`. `q` may omit the threshold. |
 | Content projection | `full_content=true` requests available Article content when Beans has it. It does not change which records match and does not guarantee a full publisher copy. |
-| Filter combination | Different filter fields combine with AND. Include values within one category, region, entity, sentiment, Source, or domain field match any listed value. Exclusion filters remove matching records. All supplied `tags` and author terms further narrow results. |
+| Filter combination | Different filter fields combine with AND. Include values within one category, region, entity, sentiment, languages, Source, or domain field match any listed value. Exclusion filters remove matching records. All supplied `tags` and author terms further narrow results. |
 | Response format | JSON is canonical for REST responses and MCP tool results. |
 
 ### Article and Story filters
@@ -367,6 +368,7 @@ All request parameters are query parameters unless the table marks `id` as a pat
 | `categories`, `exclude_categories` | Normalized category labels. | Article and Story collection routes listed in the matrix. |
 | `regions`, `entities`, `sentiments` | Normalized extracted labels. | Article and Story collection routes listed in the matrix. |
 | `tags` | All supplied normalized category, region, or entity terms must match. It is not a title or body phrase search. | Article and Story collection routes listed in the matrix. |
+| `languages` | ISO 639 language codes. Any listed value matches. A stored language matches if it equals a listed code or starts with that code. | Article and Story collection routes listed in the matrix. |
 | `from`, `to` | Inclusive UTC publication-date bounds. | Article search, similar Articles, Stories, and Story Articles. Mention dates bound `observed_at` instead. |
 | `full_content` | Requests available Article content. | Article search and feeds, Article detail, similar Articles, and Story Articles. |
 | `min_article_count` | Minimum number of Articles in a Story. Default `2`, minimum `2`. | Story discovery only. |

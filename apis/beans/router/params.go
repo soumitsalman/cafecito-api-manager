@@ -114,7 +114,7 @@ type articleScopeParams struct {
 	Entities          []string    `form:"entities" collection_format:"csv" binding:"max=100"`
 	Regions           []string    `form:"regions" collection_format:"csv" binding:"max=100"`
 	FullContent       bool        `form:"full_content,default=false"`
-	Language          string      `form:"language"`
+	Languages         []string    `form:"languages" collection_format:"csv" binding:"max=100" example:"en,es"`
 }
 
 // articleFilterParams contains the non-query, non-identity Article filters

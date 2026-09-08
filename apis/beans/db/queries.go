@@ -127,9 +127,14 @@ func buildScalarWhere(filters *BeanFilters) ([]string, pgx.NamedArgs) {
 		where = append(where, "sentiments && @sentiments")
 		params["sentiments"] = filters.Sentiments
 	}
-	if filters.Language != "" {
-		where = append(where, "language = @language")
-		params["language"] = filters.Language
+	if len(filters.Languages) > 0 {
+		lang_parts := make([]string, len(filters.Languages))
+		for i, lang := range filters.Languages {
+			param_key := fmt.Sprintf("language_%d", i)
+			params[param_key] = lang
+			lang_parts[i] = fmt.Sprintf("STARTS_WITH(language, @%s)", param_key)
+		}
+		where = append(where, "("+strings.Join(lang_parts, " OR ")+")")
 	}
 	if filters.ClusterID != uuid.Nil {
 		where = append(where, "cluster_id = @cluster_id")
