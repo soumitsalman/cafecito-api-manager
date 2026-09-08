@@ -7,7 +7,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/articles/search?q=topic+active+cybersecurity+breach+exclude+general+cybersecurity+best+practice&limit=20"
+  url: "{{baseUrl}}/articles/search?q=topic+active+cybersecurity+breach+exclude+general+cybersecurity+best+practice&limit=20&languages=en,es"
   params:
     - name: q
       value: topic+active+cybersecurity+breach+exclude+general+cybersecurity+best+practice
@@ -22,7 +22,6 @@ http:
     - name: languages
       value: en,es
       type: query
-      disabled: true
   auth: inherit
 
 settings:

@@ -7,7 +7,7 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/articles/latest?tags=startups&domains=substack&full_content=true"
+  url: "{{baseUrl}}/articles/latest?tags=startups&domains=substack&full_content=true&languages=en,es"
   params:
     - name: tags
       value: startups
@@ -21,7 +21,6 @@ http:
     - name: languages
       value: en,es
       type: query
-      disabled: true
   auth: inherit
 
 settings:
