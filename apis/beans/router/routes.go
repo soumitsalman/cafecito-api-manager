@@ -538,8 +538,8 @@ func (r *Configuration) getTopHeadlines(c *gin.Context) {
 		writeError(c, err)
 		return
 	}
-	filters.CreatedFrom = time.Now().AddDate(0, 0, -MIN_WINDOW)
-	filters.ObservedFrom = time.Now().AddDate(0, 0, -MIN_WINDOW)
+	filters.CreatedFrom = time.Now().AddDate(0, 0, -2)
+	filters.ObservedFrom = time.Now().AddDate(0, 0, -1)
 	filters.Kind = "news"
 
 	page_out, err := r.DB.QueryTrendingBeans(c.Request.Context(), *filters, *page_req, db.BEAN_COLUMNS_HEADLINES)
