@@ -1076,6 +1076,14 @@ func NewRouter(db *db.PGSack, embedder embedding.Embedder, api_keys map[string]s
 	protected.GET("/stories/:id", config.getStory)
 	protected.GET("/stories/:id/articles", config.getStoryArticles)
 
+	// PRIVATE routes. These are not part of the public API and are intended for internal use.
+	// They may change without notice.
+	// Exclude these from Swaggo and `beans.oas.json` generation.
+	private := protected.Group("/private")
+	private.GET("/articles/unique", config.privateListUniqueArticles)
+	private.GET("/stories/:id", config.privateGetStory)
+	private.GET("/stories/:id/propagation", config.privateGetStoryPropagation)
+
 	return router
 }
 

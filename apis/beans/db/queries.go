@@ -22,7 +22,11 @@ var (
 )
 
 // finalizePage trims to limit and encodes a next cursor from the last returned row when more rows exist.
+// A non-positive limit returns every row and no next cursor (unbounded callers).
 func finalizePage[T any](rows []T, limit int, cursor_of func(item T) *Cursor) Page[T] {
+	if limit <= 0 {
+		return Page[T]{Items: rows}
+	}
 	items := rows
 	has_next := false
 	if len(rows) > limit {
@@ -181,18 +185,23 @@ func buildScalarOrderQuery(table string, filters *BeanFilters, page *PageRequest
 	if len(where) > 0 {
 		where_expr = "WHERE " + strings.Join(where, " AND ")
 	}
-	params["limit"] = page.Limit + 1
+	limit_expr := ""
+	if page.Limit > 0 {
+		params["limit"] = page.Limit + 1
+		limit_expr = "LIMIT @limit"
+	}
 
 	query := fmt.Sprintf(`
 		SELECT %s -- columns
 		FROM %s -- latest_beans_view or trending_beans_view or aggregated_beans_view
 		%s -- WHERE
 		ORDER BY %s -- order by created DESC, id DESC or trend_score DESC, id DESC
-		LIMIT @limit`,
+		%s`,
 		buildSelect(select_columns, filters.FullContent),
 		table,
 		where_expr,
 		order_by,
+		limit_expr,
 	)
 	return query, params
 }
@@ -310,6 +319,124 @@ func (b *PGSack) QueryBeans(ctx context.Context, filters BeanFilters, page PageR
 			return &Cursor{Version: _CURSOR_VERSION, ID: &bean.ID, Distance: &bean.Distance.Float64}
 		} else {
 			return &Cursor{Version: _CURSOR_VERSION, ID: &bean.ID, Created: &bean.Created}
+		}
+	}), nil
+}
+
+// buildUniqueBeanQuery constructs the unique-article feed query that deduplicates
+// articles by COALESCE(cluster_id, id) within a bounded candidate window.
+//
+// Tradeoff: dedup happens inside the candidate window (searchCandidateLimit), so a
+// cluster straddling a page boundary can surface twice. This keeps the query
+// index-friendly and bounded; full-set dedup would scan the entire filtered set
+// on every page.
+//
+// table: latest_beans_view (recent/relevant) or trending_beans_view (trend).
+// sort: SORT_RECENT, SORT_TRENDING, or SORT_RELEVANT.
+func buildUniqueBeanQuery(table string, filters *BeanFilters, page *PageRequest, sort string, select_columns string) (string, pgx.NamedArgs) {
+	where, params := buildScalarWhere(filters)
+
+	order_expr := ""
+	has_distance := false
+
+	switch sort {
+	case SORT_TRENDING:
+		order_expr = "trend_score DESC, id DESC"
+		if page.Cursor != nil && page.Cursor.ID != nil && page.Cursor.TrendScore != nil {
+			where = append(where, "(trend_score, id) < (@cursor_value, @cursor_id)")
+			params["cursor_value"] = *page.Cursor.TrendScore
+			params["cursor_id"] = *page.Cursor.ID
+		}
+	case SORT_RELEVANT:
+		has_distance = true
+		order_expr = "distance ASC, id ASC"
+		params["embedding"] = pgvector.NewVector(filters.Embedding)
+		// embedding distance filter only when a threshold is set
+		if filters.Distance > 0 {
+			where = append(where, "embedding <=> @embedding <= @distance")
+			params["distance"] = filters.Distance
+		}
+		if page.Cursor != nil && page.Cursor.ID != nil && page.Cursor.Distance != nil {
+			where = append(where, "(embedding <=> @embedding, id) > (@cursor_distance, @cursor_id)")
+			params["cursor_distance"] = *page.Cursor.Distance
+			params["cursor_id"] = *page.Cursor.ID
+		}
+	default: // SORT_RECENT
+		order_expr = "created DESC, id DESC"
+		if page.Cursor != nil && page.Cursor.ID != nil && page.Cursor.Created != nil {
+			where = append(where, "(created, id) < (@cursor_value, @cursor_id)")
+			params["cursor_value"] = *page.Cursor.Created
+			params["cursor_id"] = *page.Cursor.ID
+		}
+	}
+
+	where_expr := ""
+	if len(where) > 0 {
+		where_expr = "WHERE " + strings.Join(where, " AND ")
+	}
+
+	distance_select := ""
+	if has_distance {
+		distance_select = ", embedding <=> @embedding AS distance"
+	}
+
+	params["candidate_limit"] = searchCandidateLimit(page.Limit)
+	params["limit"] = page.Limit + 1
+
+	query := fmt.Sprintf(`
+		WITH candidates AS MATERIALIZED (
+			SELECT *%s
+			FROM %s
+			%s
+			ORDER BY %s
+			LIMIT @candidate_limit
+		),
+		unique_candidates AS (
+			SELECT DISTINCT ON (COALESCE(cluster_id, id)) *
+			FROM candidates
+			ORDER BY COALESCE(cluster_id, id), %s
+		)
+		SELECT %s%s FROM unique_candidates
+		ORDER BY %s
+		LIMIT @limit`,
+		distance_select,
+		table,
+		where_expr,
+		order_expr,
+		order_expr,
+		buildSelect(select_columns, filters.FullContent),
+		distance_select,
+		order_expr,
+	)
+	return query, params
+}
+
+// QueryUniqueBeans returns one representative article per cluster (or per id when
+// cluster_id is null), ordered by the requested sort. It deduplicates within a
+// bounded candidate window; see buildUniqueBeanQuery for the tradeoff.
+func (b *PGSack) QueryUniqueBeans(ctx context.Context, filters BeanFilters, page PageRequest, sort string, columns string) (Page[Bean], error) {
+	if page.Cursor == nil {
+		page.Cursor = &Cursor{Sort: sort}
+	}
+	page.Cursor.Sort = sort
+
+	table := "latest_beans_view"
+	if sort == SORT_TRENDING {
+		table = "trending_beans_view"
+	}
+	query, params := buildUniqueBeanQuery(table, &filters, &page, sort, columns)
+	rows, err := utils.FetchAll[Bean](ctx, b.db, query, params)
+	if err != nil {
+		return Page[Bean]{}, err
+	}
+	return finalizePage(rows, page.Limit, func(bean Bean) *Cursor {
+		switch sort {
+		case SORT_TRENDING:
+			return &Cursor{Version: _CURSOR_VERSION, Sort: SORT_TRENDING, ID: &bean.ID, TrendScore: &bean.TrendScore.Float64}
+		case SORT_RELEVANT:
+			return &Cursor{Version: _CURSOR_VERSION, Sort: SORT_RELEVANT, ID: &bean.ID, Distance: &bean.Distance.Float64}
+		default:
+			return &Cursor{Version: _CURSOR_VERSION, Sort: SORT_RECENT, ID: &bean.ID, Created: &bean.Created}
 		}
 	}), nil
 }
@@ -586,10 +713,17 @@ func (b *PGSack) ClusterExists(ctx context.Context, story_id uuid.UUID) (bool, e
 }
 
 func (b *PGSack) GetCluster(ctx context.Context, story_id uuid.UUID) (Cluster, error) {
+	return b.GetClusterInLanguages(ctx, story_id, nil)
+}
+
+// GetClusterInLanguages loads one cluster. When languages is non-empty, title and
+// summary come from a member whose language matches; if none match, title and
+// summary are empty. Stats, categories, entities, and timestamps are unaffected.
+func (b *PGSack) GetClusterInLanguages(ctx context.Context, story_id uuid.UUID, languages []string) (Cluster, error) {
 	if story_id == uuid.Nil {
 		return Cluster{}, ErrNonExistentID
 	}
-	stories, err := b.hydrateStories(ctx, []uuid.UUID{story_id})
+	stories, err := b.hydrateStories(ctx, []uuid.UUID{story_id}, languages)
 	if err != nil {
 		return Cluster{}, err
 	}
@@ -620,7 +754,7 @@ func (b *PGSack) QueryClusters(ctx context.Context, filters ClusterFilters, page
 	})
 
 	ids := datautils.Transform(paged.Items, func(row *clusterBase) uuid.UUID { return row.ID })
-	stories, err := b.hydrateStories(ctx, ids)
+	stories, err := b.hydrateStories(ctx, ids, nil)
 	if err != nil {
 		return Page[Cluster]{}, err
 	}
@@ -726,12 +860,26 @@ func (b *PGSack) queryClustersByKNNSearch(ctx context.Context, filters *ClusterF
 
 // hydrateStories loads cluster stats, a longest-title representative, and up to 3
 // recent member articles (one per source when possible) from latest_beans_view.
-func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster, error) {
+// When languages is non-empty, the repr CTE restricts title/summary to members
+// whose language matches (WHERE STARTS_WITH). If none match, repr is empty and
+// title/summary are blank. Stats, categories, entities, and timestamps are
+// unaffected by languages.
+func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID, languages []string) ([]Cluster, error) {
 	if len(ids) == 0 {
 		return []Cluster{}, nil
 	}
 	params := pgx.NamedArgs{"ids": ids}
-	stats_query := `
+	repr_lang_where := ""
+	if len(languages) > 0 {
+		lang_parts := make([]string, len(languages))
+		for i, lang := range languages {
+			param_key := fmt.Sprintf("repr_language_%d", i)
+			params[param_key] = lang
+			lang_parts[i] = fmt.Sprintf("STARTS_WITH(language, @%s)", param_key)
+		}
+		repr_lang_where = "AND (" + strings.Join(lang_parts, " OR ") + ")"
+	}
+	stats_query := fmt.Sprintf(`
 		WITH members AS MATERIALIZED (
 			SELECT tr.cluster_id, b.created, b.source_id, b.categories, b.regions, b.entities
 			FROM beans b
@@ -798,26 +946,29 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 			FROM latest_beans_view
 			WHERE cluster_id = ANY(@ids)
 				AND COALESCE(title, '') <> ''
+				%s
 			ORDER BY cluster_id, LENGTH(title) DESC, created DESC, id DESC
 		)
-		SELECT
-			s.id,
-			COALESCE(rp.title, '') AS title,
-			COALESCE(rp.summary, '') AS summary,
-			s.first_created,
-			s.last_created,
-			s.bean_count,
-			s.source_count,
-			COALESCE(c.categories, '{}') AS categories,
-			COALESCE(r.regions, '{}') AS regions,
-			COALESCE(e.entities, '{}') AS entities,
-			COALESCE(t.tags, '{}') AS tags
-		FROM stats s
-		LEFT JOIN repr rp ON rp.cluster_id = s.id
-		LEFT JOIN cat_agg c ON c.cluster_id = s.id
-		LEFT JOIN region_agg r ON r.cluster_id = s.id
-		LEFT JOIN entity_agg e ON e.cluster_id = s.id
-		LEFT JOIN tag_agg t ON t.cluster_id = s.id`
+	SELECT
+		s.id,
+		COALESCE(rp.title, '') AS title,
+		COALESCE(rp.summary, '') AS summary,
+		s.first_created,
+		s.last_created,
+		s.bean_count,
+		s.source_count,
+		COALESCE(c.categories, '{}') AS categories,
+		COALESCE(r.regions, '{}') AS regions,
+		COALESCE(e.entities, '{}') AS entities,
+		COALESCE(t.tags, '{}') AS tags
+	FROM stats s
+	LEFT JOIN repr rp ON rp.cluster_id = s.id
+	LEFT JOIN cat_agg c ON c.cluster_id = s.id
+	LEFT JOIN region_agg r ON r.cluster_id = s.id
+	LEFT JOIN entity_agg e ON e.cluster_id = s.id
+	LEFT JOIN tag_agg t ON t.cluster_id = s.id`,
+		repr_lang_where,
+	)
 
 	stats, err := utils.FetchAll[Cluster](ctx, b.db, stats_query, params)
 	if err != nil {
@@ -852,9 +1003,9 @@ func (b *PGSack) hydrateStories(ctx context.Context, ids []uuid.UUID) ([]Cluster
 		) ranked
 		WHERE rn <= 3
 		ORDER BY cluster_id, rn`,
-		_CLUSTER_BEAN_COLUMNS_MINIMAL,
-		_CLUSTER_BEAN_COLUMNS_MINIMAL,
-		_CLUSTER_BEAN_COLUMNS_MINIMAL,
+		CLUSTER_BEAN_COLUMNS_MINIMAL,
+		CLUSTER_BEAN_COLUMNS_MINIMAL,
+		CLUSTER_BEAN_COLUMNS_MINIMAL,
 	)
 	beans, err := utils.FetchAll[Bean](ctx, b.db, top_query, params)
 	if err != nil {

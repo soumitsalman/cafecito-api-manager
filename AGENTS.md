@@ -74,6 +74,7 @@ The backend Swagger, gateway OpenAPI, and portal pages are separate artifacts. A
   - MCP endpoint, tool list, and agent workflow: `docs/pages/guides/mcp-ai-agents.mdx`;
   - shared authentication, pagination, or response-format behavior: `docs/pages/guides/api-conventions.mdx` and, when the quickstart changes, `docs/pages/start/first-api-call.mdx`.
 - Update `docs/zudoku.config.tsx` whenever an API reference mount, documentation page, navigation item, or redirect changes. Update `docs/pages/api-overview.mdx` or `docs/pages/start/overview.mdx` only when product availability or high-level positioning changes.
+- Exclude all `/private` routes from documentation
 
 ### Public documentation boundary
 
